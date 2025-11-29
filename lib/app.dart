@@ -1,6 +1,9 @@
-import 'package:ai_analysis_diary_app/features/auth/auth_providers.dart';
+import 'package:ai_analysis_diary_app/features/auth/data/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'features/auth/presentation/login_page.dart';
+import 'features/home/presentation/homepage.dart';
 
 class AiAnalysisDiaryApp extends StatelessWidget {
   const AiAnalysisDiaryApp({super.key});

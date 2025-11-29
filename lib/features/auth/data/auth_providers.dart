@@ -1,6 +1,7 @@
-import 'package:ai_analysis_diary_app/features/auth/auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'auth_repository.dart';
 
 // Supabase クライアント
 final supabaseProvider = Provider<SupabaseClient>((ref) {
