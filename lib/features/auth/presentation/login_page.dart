@@ -13,8 +13,18 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
+
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    emailCtrl.dispose();
+    passCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,46 +32,164 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text('ログイン')),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Center(
-          child: Column(
-            children: [
-              TextField(
-                controller: emailCtrl,
-                decoration: InputDecoration(labelText: 'メールアドレス'),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(16),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight * 0.8
               ),
-              TextField(
-                controller: passCtrl,
-                decoration: InputDecoration(labelText: 'パスワード'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  await authRepo.signIn(emailCtrl.text, passCtrl.text);
-                },
-                child: Text('ログイン'),
-              ),
-              SizedBox(height: 16),
-              RichText(
-                text: TextSpan(
-                  text: '新規ユーザ登録',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
+              child: Center(
+                child: Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignupPage()),
-                      );
-                    },
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "ようこそ！",
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .headlineSmall,
+                          ),
+              
+                          SizedBox(height: 12),
+              
+                          /// メールアドレス入力
+                          TextFormField(
+                            controller: emailCtrl,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              labelText: 'メールアドレス',
+                              prefixIcon: Icon(Icons.email),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'メールアドレスを入力してください';
+                              }
+                              if (!value.contains("@")) {
+                                return 'メールアドレスの形式が正しくありません';
+                              }
+                              return null;
+                            },
+                          ),
+              
+                          SizedBox(height: 16),
+              
+                          /// パスワード入力
+                          TextFormField(
+                            controller: passCtrl,
+                            decoration: InputDecoration(
+                              labelText: 'パスワード',
+                              prefixIcon: Icon(Icons.lock),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'パスワードを入力してください';
+                              }
+                              if (value.length < 6) {
+                                return "6文字以上のパスワードを入力してください";
+                              }
+                              return null;
+                            },
+                          ),
+              
+                          SizedBox(height: 24),
+              
+                          /// ログインボタン
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                // ヴァリデーションが失敗しているなら何もしない
+                                if (!_formKey.currentState!.validate()) return;
+                                // ローディング中のフラグ更新
+                                setState(() {
+                                  isLoading = true;
+                                });
+              
+                                try {
+                                  await authRepo.signIn(
+                                    emailCtrl.text,
+                                    passCtrl.text,
+                                  );
+                                } catch (e, st) {
+                                  // ログにエラーの詳細を残す
+                                  debugPrint('ログイン失敗: $e\n$st');
+                                  // SnackBarを表示
+                                  if (!context.mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'ログインに失敗しました。メールとパスワードを確認してください。',
+                                      ),
+                                    ),
+                                  );
+                                } finally {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
+                              },
+                              child: isLoading
+                                  ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                                  : Text('ログイン'),
+                            ),
+                          ),
+              
+                          SizedBox(height: 16),
+              
+                          /// 新規登録へのリンク
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(color: Colors.black87),
+                              children: [
+                                TextSpan(text: 'アカウントがありませんか？'),
+                                TextSpan(text: '\n'),
+                                TextSpan(
+                                  text: '新規ユーザ登録',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SignupPage(),
+                                        ),
+                                      );
+                                    },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       ),
     );
   }
