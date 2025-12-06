@@ -1,3 +1,4 @@
+import 'package:ai_analysis_diary_app/features/auth/data/auth_failure.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRepository {
@@ -5,21 +6,29 @@ class AuthRepository {
 
   AuthRepository(this.supabase);
 
-  Future<void> signUp(String email, String password) async {
+  Future<User> signUp(String email, String password) async {
     final res = await supabase.auth.signUp(email: email, password: password);
-    if (res.user == null) {
-      throw Exception('サインアップに失敗しました');
+
+    final user = res.user;
+    if (user == null) {
+      throw AuthFailure('既にアカウントが登録されています');
     }
+
+    return user;
   }
 
-  Future<void> signIn(String email, String password) async {
+  Future<User> signIn(String email, String password) async {
     final res = await supabase.auth.signInWithPassword(
       email: email,
       password: password,
     );
-    if (res.user == null) {
-      throw Exception('ログインに失敗しました');
+
+    final user = res.user;
+    if (user == null) {
+      throw AuthFailure('ログインに失敗しました');
     }
+
+    return user;
   }
 
   Future<void> signOut() async {
