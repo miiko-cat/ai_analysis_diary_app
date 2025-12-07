@@ -37,8 +37,12 @@ dependencies:
   flutter_dotenv: ^6.0.0
   supabase_flutter: ^2.10.3
   flutter_riverpod: ^3.0.3
+  logger: ^2.6.2
+  path_provider: ^2.1.5
+  sentry_flutter: ^9.8.0
 
 dev_dependencies:
+  sentry_dart_plugin: ^3.2.0
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.0
@@ -90,3 +94,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: true
+  project: flutter
+  org: kazuki-sakurai

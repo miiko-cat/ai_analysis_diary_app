@@ -1,12 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/provider/core_providers.dart';
 import 'auth_repository.dart';
-
-// Supabase クライアント
-final supabaseProvider = Provider<SupabaseClient>((ref) {
-  return Supabase.instance.client;
-});
 
 // 認証 Repository
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
