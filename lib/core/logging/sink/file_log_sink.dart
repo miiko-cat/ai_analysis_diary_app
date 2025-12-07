@@ -25,7 +25,7 @@ class FileLogSink implements LogSink {
   }) async {
     final timestamp = DateTime.now().toIso8601String();
     await _logFile.writeAsString(
-      '$timestamp [$level] $message\n',
+      '$timestamp [$level] $message $error \n$stackTrace\n',
       mode: FileMode.append,
     );
   }

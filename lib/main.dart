@@ -5,10 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'core/logging/logger_manager.dart';
+import 'core/logging/sink/file_log_sink.dart';
+import 'core/logging/sink/sentry_log_sink.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // 環境変数読み込み
   await dotenv.load(fileName: '.env');
+  // Supabase初期化
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     anonKey: dotenv.env['SUPABASE_API_KEY']!,
@@ -18,6 +24,13 @@ Future<void> main() async {
     )
   );
 
+  // Logger初期化
+  LoggerManager().addSink(FileLogSink());
+  LoggerManager().addSink(SentryLogSink());
+  // TODO: Supabaseへのログ検討
+  // LoggerManager().addSink(SupabaseLogSink(Supabase.instance.client));
+
+  // SentryFlutter初期化
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_FLUTTER_DNS']!;

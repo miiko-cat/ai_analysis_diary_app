@@ -102,7 +102,7 @@ void main() {
       ).thenAnswer((_) async => mockRes);
       await expectLater(
         () => repo.signIn('test@example.com', 'pass12'),
-        throwsA(isA<Exception>()),
+        throwsA(isA<AuthFailure>()),
       );
     });
   });

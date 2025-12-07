@@ -1,3 +1,4 @@
+import 'package:ai_analysis_diary_app/core/logging/logger_manager.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,10 +55,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         children: [
                           Text(
                             "アカウント作成",
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .headlineSmall,
+                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
 
                           SizedBox(height: 12),
@@ -110,90 +108,95 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                               onPressed: isLoading
                                   ? null
                                   : () async {
-                                // ヴァリデーションが失敗しているなら何もしない
-                                if (!_formKey.currentState!.validate()) {
-                                  return;
-                                }
-                                // ローディング中のフラグ更新
-                                setState(() {
-                                  isLoading = true;
-                                });
+                                      // ヴァリデーションが失敗しているなら何もしない
+                                      if (!_formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                      // ローディング中のフラグ更新
+                                      setState(() {
+                                        isLoading = true;
+                                      });
 
-                                try {
-                                  await authRepo.signUp(
-                                    emailCtrl.text,
-                                    passCtrl.text,
-                                  );
+                                      try {
+                                        await authRepo.signUp(
+                                          emailCtrl.text,
+                                          passCtrl.text,
+                                        );
 
-                                  if (context.mounted) {
-                                    return showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      // 外タップで閉じるのを防ぐ
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text('サインアップ成功'),
-                                          content: RichText(
-                                            text: TextSpan(
-                                              style: TextStyle(
-                                                  color: Colors.black87),
-                                              children: [
-                                                TextSpan(
-                                                  text:
-                                                  '登録したメールアドレスにメールを送信しました。',
+                                        if (context.mounted) {
+                                          return showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            // 外タップで閉じるのを防ぐ
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text('サインアップ成功'),
+                                                content: RichText(
+                                                  text: TextSpan(
+                                                    style: TextStyle(
+                                                      color: Colors.black87,
+                                                    ),
+                                                    children: [
+                                                      TextSpan(
+                                                        text:
+                                                            '登録したメールアドレスにメールを送信しました。',
+                                                      ),
+                                                      TextSpan(text: '\n'),
+                                                      TextSpan(text: '\n'),
+                                                      TextSpan(
+                                                        text:
+                                                            'メールのリンクをタップし、ログインしてください。',
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                TextSpan(text: '\n'),
-                                                TextSpan(text: '\n'),
-                                                TextSpan(
-                                                  text:
-                                                  'メールのリンクをタップし、ログインしてください。',
-                                                ),
-                                              ],
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pop(); // ダイアログを閉じる
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text('OK'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        }
+                                      } catch (e, st) {
+                                        // ログにエラーの詳細を残す
+                                        LoggerManager().error(
+                                          'アカウント登録失敗',
+                                          error: e,
+                                          stackTrace: st,
+                                        );
+                                        // SnackBarを表示
+                                        if (!context.mounted) return;
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'アカウント登録に失敗しました。メールとパスワードを確認してください。',
                                             ),
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(
-                                                  context,
-                                                ).pop(); // ダイアログを閉じる
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text('OK'),
-                                            ),
-                                          ],
                                         );
-                                      },
-                                    );
-                                  }
-                                } catch (e, st) {
-                                  // ログにエラーの詳細を残す
-                                  debugPrint('アカウント登録失敗: $e\n$st');
-                                  // SnackBarを表示
-                                  if (!context.mounted) return;
-                                  ScaffoldMessenger.of(
-                                    context,
-                                  ).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'アカウント登録に失敗しました。メールとパスワードを確認してください。',
-                                      ),
-                                    ),
-                                  );
-                                } finally {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                }
-                              },
+                                      } finally {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      }
+                                    },
                               child: isLoading
                                   ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
                                   : Text('サインアップ'),
                             ),
                           ),
@@ -205,8 +208,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                             text: TextSpan(
                               style: TextStyle(color: Colors.black87),
                               children: [
-                                TextSpan(
-                                    text: 'すでにアカウントをお持ちの方はこちら'),
+                                TextSpan(text: 'すでにアカウントをお持ちの方はこちら'),
                                 TextSpan(text: '\n'),
                                 TextSpan(
                                   text: 'ログイン画面',
