@@ -27,8 +27,6 @@ Future<void> main() async {
   // Logger初期化
   LoggerManager().addSink(FileLogSink());
   LoggerManager().addSink(SentryLogSink());
-  // TODO: Supabaseへのログ検討
-  // LoggerManager().addSink(SupabaseLogSink(Supabase.instance.client));
 
   // SentryFlutter初期化
   await SentryFlutter.init(
