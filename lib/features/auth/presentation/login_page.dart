@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/logging/logger_manager.dart';
 import '../data/auth_providers.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -38,7 +39,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             padding: EdgeInsets.all(16),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: constraints.maxHeight * 0.8
+                minHeight: constraints.maxHeight * 0.8,
               ),
               child: Center(
                 child: Card(
@@ -55,14 +56,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         children: [
                           Text(
                             "ようこそ！",
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .headlineSmall,
+                            style: Theme.of(context).textTheme.headlineSmall,
                           ),
-              
+
                           SizedBox(height: 12),
-              
+
                           /// メールアドレス入力
                           TextFormField(
                             controller: emailCtrl,
@@ -81,9 +79,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               return null;
                             },
                           ),
-              
+
                           SizedBox(height: 16),
-              
+
                           /// パスワード入力
                           TextFormField(
                             controller: passCtrl,
@@ -101,9 +99,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               return null;
                             },
                           ),
-              
+
                           SizedBox(height: 24),
-              
+
                           /// ログインボタン
                           SizedBox(
                             width: double.infinity,
@@ -111,50 +109,58 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               onPressed: isLoading
                                   ? null
                                   : () async {
-                                // ヴァリデーションが失敗しているなら何もしない
-                                if (!_formKey.currentState!.validate()) return;
-                                // ローディング中のフラグ更新
-                                setState(() {
-                                  isLoading = true;
-                                });
-              
-                                try {
-                                  await authRepo.signIn(
-                                    emailCtrl.text,
-                                    passCtrl.text,
-                                  );
-                                } catch (e, st) {
-                                  // ログにエラーの詳細を残す
-                                  debugPrint('ログイン失敗: $e\n$st');
-                                  // SnackBarを表示
-                                  if (!context.mounted) return;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'ログインに失敗しました。メールとパスワードを確認してください。',
-                                      ),
-                                    ),
-                                  );
-                                } finally {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                }
-                              },
+                                      // ヴァリデーションが失敗しているなら何もしない
+                                      if (!_formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                      // ローディング中のフラグ更新
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+
+                                      try {
+                                        await authRepo.signIn(
+                                          emailCtrl.text,
+                                          passCtrl.text,
+                                        );
+                                      } catch (e, st) {
+                                        // ログにエラーの詳細を残す
+                                        LoggerManager().error(
+                                          'ログイン失敗',
+                                          error: e,
+                                          stackTrace: st,
+                                        );
+                                        // SnackBarを表示
+                                        if (!context.mounted) return;
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'ログインに失敗しました。メールとパスワードを確認してください。',
+                                            ),
+                                          ),
+                                        );
+                                      } finally {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                      }
+                                    },
                               child: isLoading
                                   ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
                                   : Text('ログイン'),
                             ),
                           ),
-              
+
                           SizedBox(height: 16),
-              
+
                           /// 新規登録へのリンク
                           RichText(
                             text: TextSpan(
@@ -189,7 +195,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
             ),
           );
-        }
+        },
       ),
     );
   }
