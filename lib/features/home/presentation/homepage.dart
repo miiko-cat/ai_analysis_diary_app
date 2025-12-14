@@ -1,3 +1,4 @@
+import 'package:ai_analysis_diary_app/features/diary/presentation/create_diary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,14 +16,21 @@ class HomePage extends ConsumerWidget {
         title: Text('ホーム'),
         actions: [
           IconButton(
-              onPressed: () => authRepo.signOut(), icon: Icon(Icons.logout))
+            onPressed: () => authRepo.signOut(),
+            icon: Icon(Icons.logout),
+          ),
         ],
       ),
-      body: Center(
-        child: Text('ログイン済み！')
+      body: Center(child: Text('ログイン済み！')),
+      floatingActionButton: IconButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateDiary()),
+          );
+        },
+        icon: Icon(Icons.create),
       ),
     );
   }
-
-
 }
