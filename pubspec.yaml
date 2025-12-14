@@ -40,6 +40,9 @@ dependencies:
   logger: ^2.6.2
   path_provider: ^2.1.5
   sentry_flutter: ^9.8.0
+  intl: ^0.20.2
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   sentry_dart_plugin: ^3.2.0
@@ -53,6 +56,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  freezed: ^3.2.3
+  build_runner: ^2.10.4
+  json_serializable: ^6.11.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
