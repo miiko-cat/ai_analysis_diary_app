@@ -112,17 +112,19 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
+                        // 日記をDBに登録
                         final diary = Diary(
                           date: _selectedDate!,
                           title: _titleController.text,
                           description: _desController.text,
                           userId: currentUser!.id,
                         );
-                        final response = await diaryRepository.insertDiary(
-                          diary,
-                        );
+                        final response = await diaryRepository.insertDiary(diary);
 
-                        print(response);
+                        // 日記をAIに分析させる
+                        final res = await diaryRepository.analyzeDiary(response.userId, response.postId!);
+
+                        // 日記投稿完了
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -130,6 +132,7 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                               duration: Duration(seconds: 2),
                             ),
                           );
+                          Navigator.pop(context);
                         }
                       },
                       child: Text('投稿'),
