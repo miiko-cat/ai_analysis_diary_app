@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'features/auth/presentation/login_page.dart';
-import 'features/home/presentation/homepage.dart';
+import 'features/home/presentation/home_page.dart';
 
 class AiAnalysisDiaryApp extends StatelessWidget {
   const AiAnalysisDiaryApp({super.key});
