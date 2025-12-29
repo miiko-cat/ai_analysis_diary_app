@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/utils/widget/keyboard_dismiss.dart';
 import '../../auth/data/auth_providers.dart';
 import '../model/diary.dart';
 import '../repository/diary_providers.dart';
@@ -18,6 +19,11 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
   final _dateController = TextEditingController();
   final _titleController = TextEditingController();
   final _desController = TextEditingController();
+  final _titleFocus = FocusNode();
+  final _desFocus = FocusNode();
+
+  // 読み込み中
+  bool _isLoading = false;
 
   // 日付変換フォーマット
   final dateformat = DateFormat('yyyy/MM/dd');
@@ -29,6 +35,16 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
   void initState() {
     super.initState();
     _setDate();
+  }
+
+  @override
+  void dispose() {
+    _dateController.dispose();
+    _titleController.dispose();
+    _desController.dispose();
+    _titleFocus.dispose();
+    _desFocus.dispose();
+    super.dispose();
   }
 
   void _setDate() {
@@ -65,85 +81,178 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
 
     return Scaffold(
       appBar: AppBar(title: Text('日記作成')),
-      body: Center(
-        child: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+      body: KeyboardDismiss(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
           ),
-          child: Padding(
-            padding: EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '今日の日記を作成しましょう',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _dateController,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      labelText: '日付',
-                      suffixIcon: IconButton(
-                        onPressed: () => _selectDate(context),
-                        icon: Icon(Icons.calendar_today),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '日記を作成しましょう',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    SizedBox(height: 16),
+                    TextFormField(
+                      controller: _dateController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: '日付',
+                        suffixIcon: IconButton(
+                          onPressed: () => _selectDate(context),
+                          icon: Icon(Icons.calendar_today),
+                        ),
+                      ),
+                      onTap: () => _selectDate(context),
+                    ),
+                    SizedBox(height: 8),
+                    TextFormField(
+                      controller: _titleController,
+                      focusNode: _titleFocus,
+                      onTap: () => _scrollToField(_titleFocus),
+                      keyboardType: TextInputType.text,
+                      maxLength: 20,
+                      decoration: InputDecoration(labelText: 'タイトル'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'タイトルを入力してください';
+                        }
+                        if (value.length > 20) {
+                          return 'タイトルは20文字以内で入力してください';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    SizedBox(
+                      height: 240,
+                      child: TextFormField(
+                        controller: _desController,
+                        focusNode: _desFocus,
+                        onTap: () => _scrollToField(_desFocus),
+                        expands: true,
+                        maxLines: null,
+                        maxLength: 2000,
+                        keyboardType: TextInputType.multiline,
+                        textAlignVertical: TextAlignVertical.top,
+                        decoration: InputDecoration(
+                          labelText: '本文',
+                          hintText: '今日あったことを自由に書いてください',
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.all(12),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '本文を入力してください';
+                          }
+                          if (value.length > 2000) {
+                            return '本文は2000文字以内で入力してください';
+                          }
+                          return null;
+                        },
                       ),
                     ),
-                    onTap: () => _selectDate(context),
-                  ),
-                  SizedBox(height: 8),
-                  TextFormField(
-                    controller: _titleController,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(labelText: 'タイトル'),
-                  ),
-                  SizedBox(height: 8),
-                  TextFormField(
-                    controller: _desController,
-                    decoration: InputDecoration(labelText: '本文'),
-                  ),
-                  SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // 日記をDBに登録
-                        final diary = Diary(
-                          date: _selectedDate!,
-                          title: _titleController.text,
-                          description: _desController.text,
-                          userId: currentUser!.id,
-                        );
-                        final response = await diaryRepository.insertDiary(diary);
+                    SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () async {
+                                // ヴァリデーションが失敗しているなら何もしない
+                                if (!_formKey.currentState!.validate()) {
+                                  return;
+                                }
+                                // 読み込み中
+                                setState(() {
+                                  _isLoading = true;
+                                });
 
-                        // 日記をAIに分析させる
-                        final res = await diaryRepository.analyzeDiary(response.userId, response.postId!);
+                                try {
+                                  // 日記をDBに登録
+                                  final diary = Diary(
+                                    date: _selectedDate!,
+                                    title: _titleController.text,
+                                    description: _desController.text,
+                                    userId: currentUser!.id,
+                                  );
+                                  final response = await diaryRepository
+                                      .insertDiary(diary);
 
-                        // 日記投稿完了
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("日記投稿完了！"),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Text('投稿'),
+                                  // 日記をAIに分析させる
+                                  final res = await diaryRepository
+                                      .analyzeDiary(
+                                        response.userId,
+                                        response.postId!,
+                                      );
+
+                                  // 日記投稿完了
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("日記投稿完了！"),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                    Navigator.pop(context);
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('投稿に失敗しました')),
+                                    );
+                                  }
+                                } finally {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                }
+                              },
+                        child: _isLoading
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text('投稿'),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _scrollToField(FocusNode node) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!node.hasFocus) return;
+
+      Scrollable.ensureVisible(
+        node.context!,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        alignment: 0.2, // 上寄せ
+      );
+    });
   }
 }

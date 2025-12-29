@@ -15,15 +15,15 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final emailCtrl = TextEditingController();
-  final passCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
 
-  bool isLoading = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    emailCtrl.dispose();
-    passCtrl.dispose();
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
     super.dispose();
   }
 
@@ -63,7 +63,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                           /// メールアドレス入力
                           TextFormField(
-                            controller: emailCtrl,
+                            controller: _emailCtrl,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               labelText: 'メールアドレス',
@@ -84,7 +84,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                           /// パスワード入力
                           TextFormField(
-                            controller: passCtrl,
+                            controller: _passCtrl,
                             decoration: InputDecoration(
                               labelText: 'パスワード',
                               prefixIcon: Icon(Icons.lock),
@@ -106,7 +106,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: isLoading
+                              onPressed: _isLoading
                                   ? null
                                   : () async {
                                       // ヴァリデーションが失敗しているなら何もしない
@@ -115,13 +115,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       }
                                       // ローディング中のフラグ更新
                                       setState(() {
-                                        isLoading = true;
+                                        _isLoading = true;
                                       });
 
                                       try {
                                         await authRepo.signIn(
-                                          emailCtrl.text,
-                                          passCtrl.text,
+                                          _emailCtrl.text,
+                                          _passCtrl.text,
                                         );
                                       } catch (e, st) {
                                         // ログにエラーの詳細を残す
@@ -143,11 +143,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         );
                                       } finally {
                                         setState(() {
-                                          isLoading = false;
+                                          _isLoading = false;
                                         });
                                       }
                                     },
-                              child: isLoading
+                              child: _isLoading
                                   ? SizedBox(
                                       height: 20,
                                       width: 20,
