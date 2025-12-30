@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DiaryWithAnalysis {
 
-@JsonKey(name: 'post_id', includeToJson: false) String? get postId;@JsonKey(name: 'user_id', includeToJson: false) String? get userId; DateTime get date; String get title; String get description; String? get sentiment; List<String>? get emotion; String? get summary;
+@JsonKey(name: 'post_id', includeToJson: false) String? get postId;@JsonKey(name: 'user_id', includeToJson: false) String? get userId; DateTime get date; String get title; String get description; Sentiment? get sentiment; List<String>? get emotion; String? get summary;
 /// Create a copy of DiaryWithAnalysis
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $DiaryWithAnalysisCopyWith<$Res>  {
   factory $DiaryWithAnalysisCopyWith(DiaryWithAnalysis value, $Res Function(DiaryWithAnalysis) _then) = _$DiaryWithAnalysisCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'post_id', includeToJson: false) String? postId,@JsonKey(name: 'user_id', includeToJson: false) String? userId, DateTime date, String title, String description, String? sentiment, List<String>? emotion, String? summary
+@JsonKey(name: 'post_id', includeToJson: false) String? postId,@JsonKey(name: 'user_id', includeToJson: false) String? userId, DateTime date, String title, String description, Sentiment? sentiment, List<String>? emotion, String? summary
 });
 
 
@@ -73,7 +73,7 @@ as String?,date: null == date ? _self.date : date // ignore: cast_nullable_to_no
 as DateTime,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,sentiment: freezed == sentiment ? _self.sentiment : sentiment // ignore: cast_nullable_to_non_nullable
-as String?,emotion: freezed == emotion ? _self.emotion : emotion // ignore: cast_nullable_to_non_nullable
+as Sentiment?,emotion: freezed == emotion ? _self.emotion : emotion // ignore: cast_nullable_to_non_nullable
 as List<String>?,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -160,7 +160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  String? sentiment,  List<String>? emotion,  String? summary)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DiaryWithAnalysis() when $default != null:
 return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary);case _:
@@ -181,7 +181,7 @@ return $default(_that.postId,_that.userId,_that.date,_that.title,_that.descripti
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  String? sentiment,  List<String>? emotion,  String? summary)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary)  $default,) {final _that = this;
 switch (_that) {
 case _DiaryWithAnalysis():
 return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary);case _:
@@ -201,7 +201,7 @@ return $default(_that.postId,_that.userId,_that.date,_that.title,_that.descripti
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  String? sentiment,  List<String>? emotion,  String? summary)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary)?  $default,) {final _that = this;
 switch (_that) {
 case _DiaryWithAnalysis() when $default != null:
 return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary);case _:
@@ -224,7 +224,7 @@ class _DiaryWithAnalysis implements DiaryWithAnalysis {
 @override final  DateTime date;
 @override final  String title;
 @override final  String description;
-@override final  String? sentiment;
+@override final  Sentiment? sentiment;
  final  List<String>? _emotion;
 @override List<String>? get emotion {
   final value = _emotion;
@@ -269,7 +269,7 @@ abstract mixin class _$DiaryWithAnalysisCopyWith<$Res> implements $DiaryWithAnal
   factory _$DiaryWithAnalysisCopyWith(_DiaryWithAnalysis value, $Res Function(_DiaryWithAnalysis) _then) = __$DiaryWithAnalysisCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'post_id', includeToJson: false) String? postId,@JsonKey(name: 'user_id', includeToJson: false) String? userId, DateTime date, String title, String description, String? sentiment, List<String>? emotion, String? summary
+@JsonKey(name: 'post_id', includeToJson: false) String? postId,@JsonKey(name: 'user_id', includeToJson: false) String? userId, DateTime date, String title, String description, Sentiment? sentiment, List<String>? emotion, String? summary
 });
 
 
@@ -294,7 +294,7 @@ as String?,date: null == date ? _self.date : date // ignore: cast_nullable_to_no
 as DateTime,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,sentiment: freezed == sentiment ? _self.sentiment : sentiment // ignore: cast_nullable_to_non_nullable
-as String?,emotion: freezed == emotion ? _self._emotion : emotion // ignore: cast_nullable_to_non_nullable
+as Sentiment?,emotion: freezed == emotion ? _self._emotion : emotion // ignore: cast_nullable_to_non_nullable
 as List<String>?,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

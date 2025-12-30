@@ -13,7 +13,7 @@ _DiaryWithAnalysis _$DiaryWithAnalysisFromJson(Map<String, dynamic> json) =>
       date: DateTime.parse(json['date'] as String),
       title: json['title'] as String,
       description: json['description'] as String,
-      sentiment: json['sentiment'] as String?,
+      sentiment: $enumDecodeNullable(_$SentimentEnumMap, json['sentiment']),
       emotion: (json['emotion'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -25,7 +25,13 @@ Map<String, dynamic> _$DiaryWithAnalysisToJson(_DiaryWithAnalysis instance) =>
       'date': instance.date.toIso8601String(),
       'title': instance.title,
       'description': instance.description,
-      'sentiment': instance.sentiment,
+      'sentiment': _$SentimentEnumMap[instance.sentiment],
       'emotion': instance.emotion,
       'summary': instance.summary,
     };
+
+const _$SentimentEnumMap = {
+  Sentiment.positive: 'positive',
+  Sentiment.negative: 'negative',
+  Sentiment.neutral: 'neutral',
+};
