@@ -1,12 +1,12 @@
 import 'package:ai_analysis_diary_app/features/diary/presentation/create_diary.dart';
-import 'package:ai_analysis_diary_app/features/home/presentation/sort_bar.dart';
+import 'package:ai_analysis_diary_app/features/home/presentation/widgets/sort_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/data/auth_providers.dart';
 import '../../diary/repository/diary_providers.dart';
-import 'display_list.dart';
-import 'filter_bar.dart';
+import 'widgets/display_list.dart';
+import 'widgets/filter_bar.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -55,28 +55,30 @@ class HomePageState extends ConsumerState<HomePage> {
               });
             },
           ),
-          FutureBuilder(
-            future: diaryRepository.fetchDiariesWithAnalysis(
-              userId: currentUser!.id,
-              sentiment: _selectedSentiment,
-              isDesc: _isDesc,
-            ),
-            builder: (context, snapshot) {
-              // 読み込み中
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-              // エラー発生
-              if (snapshot.hasError) {
-                return Center(child: Text('エラー: ${snapshot.error}'));
-              }
+          Expanded(
+            child: FutureBuilder(
+              future: diaryRepository.fetchDiariesWithAnalysis(
+                userId: currentUser!.id,
+                sentiment: _selectedSentiment,
+                isDesc: _isDesc,
+              ),
+              builder: (context, snapshot) {
+                // 読み込み中
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                // エラー発生
+                if (snapshot.hasError) {
+                  return Center(child: Text('エラー: ${snapshot.error}'));
+                }
 
-              final diaries = snapshot.data!;
-              if (diaries.isEmpty) {
-                return const Center(child: Text('日記がまだありません'));
-              }
-              return DisplayList(diaries: diaries);
-            },
+                final diaries = snapshot.data!;
+                if (diaries.isEmpty) {
+                  return const Center(child: Text('日記がまだありません'));
+                }
+                return DisplayList(diaries: diaries);
+              },
+            ),
           ),
         ],
       ),
