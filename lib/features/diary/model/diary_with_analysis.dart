@@ -1,5 +1,6 @@
 // ignore_for_file: invalid_annotation_target
 
+import 'package:ai_analysis_diary_app/features/diary/model/sentiment.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'diary_with_analysis.freezed.dart';
@@ -17,7 +18,7 @@ abstract class DiaryWithAnalysis with _$DiaryWithAnalysis {
     required DateTime date,
     required String title,
     required String description,
-    String? sentiment,
+    Sentiment? sentiment,
     List<String>? emotion,
     String? summary
   }) = _DiaryWithAnalysis;
