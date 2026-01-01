@@ -1,4 +1,5 @@
 import 'package:ai_analysis_diary_app/features/diary/presentation/create_diary.dart';
+import 'package:ai_analysis_diary_app/features/diary/presentation/detail_diary.dart';
 import 'package:ai_analysis_diary_app/features/home/presentation/widgets/sort_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -76,7 +77,16 @@ class HomePageState extends ConsumerState<HomePage> {
                 if (diaries.isEmpty) {
                   return const Center(child: Text('日記がまだありません'));
                 }
-                return DisplayList(diaries: diaries);
+                return DisplayList(
+                  diaries: diaries,
+                  navigateToDetail: (diary) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => DetailDiary(diary: diary),
+                      ),
+                    );
+                  },
+                );
               },
             ),
           ),

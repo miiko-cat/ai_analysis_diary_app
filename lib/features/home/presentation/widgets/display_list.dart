@@ -6,8 +6,9 @@ import 'package:intl/intl.dart';
 
 class DisplayList extends StatelessWidget {
   final List<DiaryWithAnalysis> diaries;
+  final void Function(DiaryWithAnalysis diary) navigateToDetail;
 
-  const DisplayList({super.key, required this.diaries});
+  const DisplayList({super.key, required this.diaries, required this.navigateToDetail});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +21,7 @@ class DisplayList extends StatelessWidget {
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: ListTile(
+            onTap: () { navigateToDetail(diary); },
             leading: Icon(
               diary.sentiment.icon,
               color: diary.sentiment.color,
