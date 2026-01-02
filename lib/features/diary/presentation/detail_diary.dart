@@ -39,7 +39,7 @@ class DetailDiary extends StatelessWidget {
         SizedBox(width: 8),
         diary.sentiment.chip,
         Spacer(),
-        Text(DateFormat('yyyy/MM/dd HH:mm:ss').format(diary.date.toLocal()))
+        Text(DateFormat('yyyy/MM/dd HH:mm:ss').format(diary.date.toLocal())),
       ],
     );
   }
@@ -77,34 +77,69 @@ class DetailDiary extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           SizedBox(height: 8),
-          if (diary.summary != null)
+          if (diary.summary != null) ...[
             summarySection(context, diary.summary!),
+            SizedBox(height: 12),
+          ],
+          if (diary.advice != null) adviceSection(context, diary.advice!),
         ],
       ),
     );
   }
 
   Widget summarySection(BuildContext context, String summary) {
+    return aiInfoSection(
+      context,
+      icon: Icons.summarize,
+      title: '要約',
+      content: summary,
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+    );
+  }
+
+  Widget adviceSection(BuildContext context, String advice) {
+    return aiInfoSection(
+      context,
+      icon: Icons.lightbulb_outline,
+      title: 'AIアドバイス',
+      content: advice,
+      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+    );
+  }
+
+  Widget aiInfoSection(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String content,
+    required Color backgroundColor,
+  }) {
+    final theme = Theme.of(context);
+
     return Card(
-      color: Theme.of(context).colorScheme.secondaryContainer,
+      color: backgroundColor,
       elevation: 0,
       child: Padding(
         padding: EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '要約',
-              style: Theme.of(
-                context,
-              ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Icon(icon, size: 18),
+                SizedBox(width: 6),
+                Text(
+                  title,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 8),
             Text(
-              summary,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(height: 1.6),
+              content,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
             ),
           ],
         ),

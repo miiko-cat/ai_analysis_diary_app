@@ -194,11 +194,16 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                                       .insertDiary(diary);
 
                                   // 日記をAIに分析させる
-                                  final res = await diaryRepository
-                                      .analyzeDiary(
-                                        response.userId,
-                                        response.postId!,
-                                      );
+                                  await diaryRepository.analyzeDiary(
+                                    response.userId,
+                                    response.postId!,
+                                  );
+
+                                  // 感情に応じたアドバイスを生成
+                                  await diaryRepository.generateAdvice(
+                                    response.userId,
+                                    response.postId!,
+                                  );
 
                                   // 日記投稿完了
                                   if (context.mounted) {
