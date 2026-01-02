@@ -14,15 +14,18 @@ class SignupPage extends ConsumerStatefulWidget {
 
 class _SignupPageState extends ConsumerState<SignupPage> {
   final _formKey = GlobalKey<FormState>();
-  final emailCtrl = TextEditingController();
-  final passCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
 
-  bool isLoading = false;
+  bool _isLoading = false;
+
+  // パス表示・非表示
+  bool _isObscure = true;
 
   @override
   void dispose() {
-    emailCtrl.dispose();
-    passCtrl.dispose();
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
     super.dispose();
   }
 
@@ -62,7 +65,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
                           /// メールアドレス入力
                           TextFormField(
-                            controller: emailCtrl,
+                            controller: _emailCtrl,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               labelText: 'メールアドレス',
@@ -83,10 +86,25 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
                           /// パスワード入力
                           TextFormField(
-                            controller: passCtrl,
+                            controller: _passCtrl,
+                            obscureText: _isObscure,
+                            keyboardType: TextInputType.visiblePassword,
+                            autofillHints: [AutofillHints.password],
                             decoration: InputDecoration(
                               labelText: 'パスワード',
                               prefixIcon: Icon(Icons.lock),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                },
+                                icon: Icon(
+                                  _isObscure
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -105,7 +123,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: isLoading
+                              onPressed: _isLoading
                                   ? null
                                   : () async {
                                       // ヴァリデーションが失敗しているなら何もしない
@@ -114,13 +132,13 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                       }
                                       // ローディング中のフラグ更新
                                       setState(() {
-                                        isLoading = true;
+                                        _isLoading = true;
                                       });
 
                                       try {
                                         await authRepo.signUp(
-                                          emailCtrl.text,
-                                          passCtrl.text,
+                                          _emailCtrl.text,
+                                          _passCtrl.text,
                                         );
 
                                         if (context.mounted) {
@@ -185,11 +203,11 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                         );
                                       } finally {
                                         setState(() {
-                                          isLoading = false;
+                                          _isLoading = false;
                                         });
                                       }
                                     },
-                              child: isLoading
+                              child: _isLoading
                                   ? SizedBox(
                                       height: 20,
                                       width: 20,

@@ -18,7 +18,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
 
+  // ローディング中
   bool _isLoading = false;
+
+  // パス表示・非表示
+  bool _isObscure = true;
 
   @override
   void dispose() {
@@ -85,9 +89,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           /// パスワード入力
                           TextFormField(
                             controller: _passCtrl,
+                            obscureText: _isObscure,
+                            keyboardType: TextInputType.visiblePassword,
+                            autofillHints: [AutofillHints.password],
                             decoration: InputDecoration(
                               labelText: 'パスワード',
                               prefixIcon: Icon(Icons.lock),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                },
+                                icon: _isObscure
+                                    ? Icon(Icons.visibility_off)
+                                    : Icon(Icons.visibility),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
