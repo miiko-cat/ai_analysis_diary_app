@@ -25,6 +25,14 @@ class DiaryRepository {
     return response.data;
   }
 
+  Future<dynamic> generateAdvice(String userId, String postId) async {
+    final response = await supabase.functions.invoke(
+      'generate-advice',
+      body: {'userId': userId, 'postId': postId},
+    );
+    return response.data;
+  }
+
   Future<List<DiaryWithAnalysis>> fetchDiariesWithAnalysis({
     required String userId,
     String? sentiment,
@@ -38,7 +46,7 @@ class DiaryRepository {
         .from('diary_with_analysis')
         .select()
         .eq('user_id', userId);
-        // .range(start, end)
+    // .range(start, end)
 
     // 感情でフィルターを掛ける
     if (sentiment != null) {

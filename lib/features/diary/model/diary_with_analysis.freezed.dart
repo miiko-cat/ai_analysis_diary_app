@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DiaryWithAnalysis {
 
-@JsonKey(name: 'post_id', includeToJson: false) String? get postId;@JsonKey(name: 'user_id', includeToJson: false) String? get userId; DateTime get date; String get title; String get description; Sentiment? get sentiment; List<String>? get emotion; String? get summary;
+@JsonKey(name: 'post_id', includeToJson: false) String? get postId;@JsonKey(name: 'user_id', includeToJson: false) String? get userId; DateTime get date; String get title; String get description; Sentiment? get sentiment; List<String>? get emotion; String? get summary; String? get advice;
 /// Create a copy of DiaryWithAnalysis
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $DiaryWithAnalysisCopyWith<DiaryWithAnalysis> get copyWith => _$DiaryWithAnalysi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiaryWithAnalysis&&(identical(other.postId, postId) || other.postId == postId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.date, date) || other.date == date)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.sentiment, sentiment) || other.sentiment == sentiment)&&const DeepCollectionEquality().equals(other.emotion, emotion)&&(identical(other.summary, summary) || other.summary == summary));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiaryWithAnalysis&&(identical(other.postId, postId) || other.postId == postId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.date, date) || other.date == date)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.sentiment, sentiment) || other.sentiment == sentiment)&&const DeepCollectionEquality().equals(other.emotion, emotion)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.advice, advice) || other.advice == advice));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,postId,userId,date,title,description,sentiment,const DeepCollectionEquality().hash(emotion),summary);
+int get hashCode => Object.hash(runtimeType,postId,userId,date,title,description,sentiment,const DeepCollectionEquality().hash(emotion),summary,advice);
 
 @override
 String toString() {
-  return 'DiaryWithAnalysis(postId: $postId, userId: $userId, date: $date, title: $title, description: $description, sentiment: $sentiment, emotion: $emotion, summary: $summary)';
+  return 'DiaryWithAnalysis(postId: $postId, userId: $userId, date: $date, title: $title, description: $description, sentiment: $sentiment, emotion: $emotion, summary: $summary, advice: $advice)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $DiaryWithAnalysisCopyWith<$Res>  {
   factory $DiaryWithAnalysisCopyWith(DiaryWithAnalysis value, $Res Function(DiaryWithAnalysis) _then) = _$DiaryWithAnalysisCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'post_id', includeToJson: false) String? postId,@JsonKey(name: 'user_id', includeToJson: false) String? userId, DateTime date, String title, String description, Sentiment? sentiment, List<String>? emotion, String? summary
+@JsonKey(name: 'post_id', includeToJson: false) String? postId,@JsonKey(name: 'user_id', includeToJson: false) String? userId, DateTime date, String title, String description, Sentiment? sentiment, List<String>? emotion, String? summary, String? advice
 });
 
 
@@ -65,7 +65,7 @@ class _$DiaryWithAnalysisCopyWithImpl<$Res>
 
 /// Create a copy of DiaryWithAnalysis
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? postId = freezed,Object? userId = freezed,Object? date = null,Object? title = null,Object? description = null,Object? sentiment = freezed,Object? emotion = freezed,Object? summary = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? postId = freezed,Object? userId = freezed,Object? date = null,Object? title = null,Object? description = null,Object? sentiment = freezed,Object? emotion = freezed,Object? summary = freezed,Object? advice = freezed,}) {
   return _then(_self.copyWith(
 postId: freezed == postId ? _self.postId : postId // ignore: cast_nullable_to_non_nullable
 as String?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -75,6 +75,7 @@ as String,description: null == description ? _self.description : description // 
 as String,sentiment: freezed == sentiment ? _self.sentiment : sentiment // ignore: cast_nullable_to_non_nullable
 as Sentiment?,emotion: freezed == emotion ? _self.emotion : emotion // ignore: cast_nullable_to_non_nullable
 as List<String>?,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
+as String?,advice: freezed == advice ? _self.advice : advice // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary,  String? advice)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DiaryWithAnalysis() when $default != null:
-return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary);case _:
+return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary,_that.advice);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.postId,_that.userId,_that.date,_that.title,_that.descripti
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary,  String? advice)  $default,) {final _that = this;
 switch (_that) {
 case _DiaryWithAnalysis():
-return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary);case _:
+return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary,_that.advice);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.postId,_that.userId,_that.date,_that.title,_that.descripti
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'post_id', includeToJson: false)  String? postId, @JsonKey(name: 'user_id', includeToJson: false)  String? userId,  DateTime date,  String title,  String description,  Sentiment? sentiment,  List<String>? emotion,  String? summary,  String? advice)?  $default,) {final _that = this;
 switch (_that) {
 case _DiaryWithAnalysis() when $default != null:
-return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary);case _:
+return $default(_that.postId,_that.userId,_that.date,_that.title,_that.description,_that.sentiment,_that.emotion,_that.summary,_that.advice);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.postId,_that.userId,_that.date,_that.title,_that.descripti
 @JsonSerializable()
 
 class _DiaryWithAnalysis implements DiaryWithAnalysis {
-  const _DiaryWithAnalysis({@JsonKey(name: 'post_id', includeToJson: false) this.postId, @JsonKey(name: 'user_id', includeToJson: false) this.userId, required this.date, required this.title, required this.description, this.sentiment, final  List<String>? emotion, this.summary}): _emotion = emotion;
+  const _DiaryWithAnalysis({@JsonKey(name: 'post_id', includeToJson: false) this.postId, @JsonKey(name: 'user_id', includeToJson: false) this.userId, required this.date, required this.title, required this.description, this.sentiment, final  List<String>? emotion, this.summary, this.advice}): _emotion = emotion;
   factory _DiaryWithAnalysis.fromJson(Map<String, dynamic> json) => _$DiaryWithAnalysisFromJson(json);
 
 @override@JsonKey(name: 'post_id', includeToJson: false) final  String? postId;
@@ -235,6 +236,7 @@ class _DiaryWithAnalysis implements DiaryWithAnalysis {
 }
 
 @override final  String? summary;
+@override final  String? advice;
 
 /// Create a copy of DiaryWithAnalysis
 /// with the given fields replaced by the non-null parameter values.
@@ -249,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DiaryWithAnalysis&&(identical(other.postId, postId) || other.postId == postId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.date, date) || other.date == date)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.sentiment, sentiment) || other.sentiment == sentiment)&&const DeepCollectionEquality().equals(other._emotion, _emotion)&&(identical(other.summary, summary) || other.summary == summary));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DiaryWithAnalysis&&(identical(other.postId, postId) || other.postId == postId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.date, date) || other.date == date)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.sentiment, sentiment) || other.sentiment == sentiment)&&const DeepCollectionEquality().equals(other._emotion, _emotion)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.advice, advice) || other.advice == advice));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,postId,userId,date,title,description,sentiment,const DeepCollectionEquality().hash(_emotion),summary);
+int get hashCode => Object.hash(runtimeType,postId,userId,date,title,description,sentiment,const DeepCollectionEquality().hash(_emotion),summary,advice);
 
 @override
 String toString() {
-  return 'DiaryWithAnalysis(postId: $postId, userId: $userId, date: $date, title: $title, description: $description, sentiment: $sentiment, emotion: $emotion, summary: $summary)';
+  return 'DiaryWithAnalysis(postId: $postId, userId: $userId, date: $date, title: $title, description: $description, sentiment: $sentiment, emotion: $emotion, summary: $summary, advice: $advice)';
 }
 
 
@@ -269,7 +271,7 @@ abstract mixin class _$DiaryWithAnalysisCopyWith<$Res> implements $DiaryWithAnal
   factory _$DiaryWithAnalysisCopyWith(_DiaryWithAnalysis value, $Res Function(_DiaryWithAnalysis) _then) = __$DiaryWithAnalysisCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'post_id', includeToJson: false) String? postId,@JsonKey(name: 'user_id', includeToJson: false) String? userId, DateTime date, String title, String description, Sentiment? sentiment, List<String>? emotion, String? summary
+@JsonKey(name: 'post_id', includeToJson: false) String? postId,@JsonKey(name: 'user_id', includeToJson: false) String? userId, DateTime date, String title, String description, Sentiment? sentiment, List<String>? emotion, String? summary, String? advice
 });
 
 
@@ -286,7 +288,7 @@ class __$DiaryWithAnalysisCopyWithImpl<$Res>
 
 /// Create a copy of DiaryWithAnalysis
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? postId = freezed,Object? userId = freezed,Object? date = null,Object? title = null,Object? description = null,Object? sentiment = freezed,Object? emotion = freezed,Object? summary = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? postId = freezed,Object? userId = freezed,Object? date = null,Object? title = null,Object? description = null,Object? sentiment = freezed,Object? emotion = freezed,Object? summary = freezed,Object? advice = freezed,}) {
   return _then(_DiaryWithAnalysis(
 postId: freezed == postId ? _self.postId : postId // ignore: cast_nullable_to_non_nullable
 as String?,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -296,6 +298,7 @@ as String,description: null == description ? _self.description : description // 
 as String,sentiment: freezed == sentiment ? _self.sentiment : sentiment // ignore: cast_nullable_to_non_nullable
 as Sentiment?,emotion: freezed == emotion ? _self._emotion : emotion // ignore: cast_nullable_to_non_nullable
 as List<String>?,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
+as String?,advice: freezed == advice ? _self.advice : advice // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

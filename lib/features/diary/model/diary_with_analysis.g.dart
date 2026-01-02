@@ -18,6 +18,7 @@ _DiaryWithAnalysis _$DiaryWithAnalysisFromJson(Map<String, dynamic> json) =>
           ?.map((e) => e as String)
           .toList(),
       summary: json['summary'] as String?,
+      advice: json['advice'] as String?,
     );
 
 Map<String, dynamic> _$DiaryWithAnalysisToJson(_DiaryWithAnalysis instance) =>
@@ -28,6 +29,7 @@ Map<String, dynamic> _$DiaryWithAnalysisToJson(_DiaryWithAnalysis instance) =>
       'sentiment': _$SentimentEnumMap[instance.sentiment],
       'emotion': instance.emotion,
       'summary': instance.summary,
+      'advice': instance.advice,
     };
 
 const _$SentimentEnumMap = {

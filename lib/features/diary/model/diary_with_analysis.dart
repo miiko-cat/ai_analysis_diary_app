@@ -20,7 +20,8 @@ abstract class DiaryWithAnalysis with _$DiaryWithAnalysis {
     required String description,
     Sentiment? sentiment,
     List<String>? emotion,
-    String? summary
+    String? summary,
+    String? advice
   }) = _DiaryWithAnalysis;
 
   factory DiaryWithAnalysis.fromJson(Map<String, dynamic> json) => _$DiaryWithAnalysisFromJson(json);
