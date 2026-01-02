@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/auth_providers.dart';
+import '../domain/validate_password.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
@@ -53,6 +54,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                     padding: EdgeInsets.all(24),
                     child: Form(
                       key: _formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -106,15 +108,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                 ),
                               ),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'パスワードを入力してください';
-                              }
-                              if (value.length < 6) {
-                                return "6文字以上のパスワードを入力してください";
-                              }
-                              return null;
-                            },
+                            validator: validatePassword,
                           ),
 
                           SizedBox(height: 24),
