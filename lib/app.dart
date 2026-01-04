@@ -1,4 +1,4 @@
-import 'package:ai_analysis_diary_app/features/auth/data/auth_providers.dart';
+import 'package:ai_analysis_diary_app/features/auth/repository/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,4 +1,4 @@
-import 'package:ai_analysis_diary_app/features/auth/data/auth_failure.dart';
+import 'package:ai_analysis_diary_app/features/auth/repository/auth_failure.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRepository {

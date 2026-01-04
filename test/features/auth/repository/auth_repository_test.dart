@@ -1,5 +1,5 @@
-import 'package:ai_analysis_diary_app/features/auth/data/auth_failure.dart';
-import 'package:ai_analysis_diary_app/features/auth/data/auth_repository.dart';
+import 'package:ai_analysis_diary_app/features/auth/repository/auth_failure.dart';
+import 'package:ai_analysis_diary_app/features/auth/repository/auth_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 

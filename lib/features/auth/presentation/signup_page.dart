@@ -3,8 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/auth_providers.dart';
-import '../domain/validate_password.dart';
+import '../repository/auth_providers.dart';
+import '../domain/validate_auth.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
@@ -73,15 +73,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                               labelText: 'メールアドレス',
                               prefixIcon: Icon(Icons.email),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'メールアドレスを入力してください';
-                              }
-                              if (!value.contains("@")) {
-                                return 'メールアドレスの形式が正しくありません';
-                              }
-                              return null;
-                            },
+                            validator: validateEmail,
                           ),
 
                           SizedBox(height: 16),
