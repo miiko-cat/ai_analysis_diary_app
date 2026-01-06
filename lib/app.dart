@@ -12,7 +12,10 @@ class AiAnalysisDiaryApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AIセラピー日記',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
+      theme: ThemeData(
+        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: 'NotoSansJP',
+      ),
       home: const AuthGate(),
     );
   }
@@ -35,7 +38,7 @@ class AuthGate extends ConsumerWidget {
       },
       error: (e, _) => Scaffold(body: Center(child: Text('エラー: $e'))),
       loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      const Scaffold(body: Center(child: CircularProgressIndicator())),
     );
   }
 }
