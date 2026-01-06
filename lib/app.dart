@@ -1,8 +1,8 @@
-import 'package:ai_analysis_diary_app/features/auth/data/auth_providers.dart';
+import 'package:ai_analysis_diary_app/features/auth/presentation/auth_page.dart';
+import 'package:ai_analysis_diary_app/features/auth/repository/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'features/auth/presentation/login_page.dart';
 import 'features/home/presentation/home_page.dart';
 
 class AiAnalysisDiaryApp extends StatelessWidget {
@@ -29,7 +29,7 @@ class AuthGate extends ConsumerWidget {
       data: (state) {
         final session = state.session;
         if (session == null) {
-          return const LoginPage();
+          return const AuthPage(mode: AuthMode.login);
         }
         return const HomePage();
       },

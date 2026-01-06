@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/utils/widget/keyboard_dismiss.dart';
-import '../../auth/data/auth_providers.dart';
+import '../../auth/repository/auth_providers.dart';
 import '../model/diary.dart';
 import '../repository/diary_providers.dart';
 

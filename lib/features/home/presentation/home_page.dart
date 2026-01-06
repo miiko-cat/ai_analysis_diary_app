@@ -4,7 +4,7 @@ import 'package:ai_analysis_diary_app/features/home/presentation/widgets/sort_ba
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../auth/data/auth_providers.dart';
+import '../../auth/repository/auth_providers.dart';
 import '../../diary/repository/diary_providers.dart';
 import 'widgets/display_list.dart';
 import 'widgets/filter_bar.dart';

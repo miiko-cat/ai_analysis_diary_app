@@ -1,3 +1,13 @@
+String? validateEmail(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'メールアドレスを入力してください';
+  }
+  if (!RegExp(r'^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,}$').hasMatch(value)) {
+    return 'メールアドレスの形式が正しくありません';
+  }
+  return null;
+}
+
 String? validatePassword(String? value) {
   if (value == null || value.isEmpty) {
     return 'パスワードを入力してください';
