@@ -2,9 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../auth_mode.dart';
-import '../login_page.dart';
-import '../signup_page.dart';
+import '../auth_page.dart';
 import '../view_model/auth_state.dart';
 
 class AuthForm extends ConsumerStatefulWidget {
@@ -13,6 +11,7 @@ class AuthForm extends ConsumerStatefulWidget {
   final ValueChanged<String> onEmailChanged;
   final ValueChanged<String> onPasswordChanged;
   final VoidCallback onSubmit;
+  final Function(BuildContext) onSwitchModeTap;
 
   const AuthForm({
     super.key,
@@ -21,6 +20,7 @@ class AuthForm extends ConsumerStatefulWidget {
     required this.onEmailChanged,
     required this.onPasswordChanged,
     required this.onSubmit,
+    required this.onSwitchModeTap,
   });
 
   @override
@@ -138,17 +138,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                         decoration: TextDecoration.underline,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  widget.mode == AuthMode.login
-                                  ? SignupPage()
-                                  : LoginPage(),
-                            ),
-                          );
-                        },
+                        ..onTap = () => widget.onSwitchModeTap(context),
                     ),
                   ],
                 ),

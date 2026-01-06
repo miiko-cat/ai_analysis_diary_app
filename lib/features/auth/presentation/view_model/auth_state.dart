@@ -20,6 +20,13 @@ class AuthState {
     this.errorMessage,
   });
 
+  // バリデーションチェック
+  bool get isValid =>
+      emailError == null &&
+      passwordError == null &&
+      email.isNotEmpty &&
+      password.isNotEmpty;
+
   AuthState copyWith({
     String? email,
     String? password,

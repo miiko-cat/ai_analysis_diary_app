@@ -1,4 +1,0 @@
-enum AuthMode {
-  login,
-  signup,
-}

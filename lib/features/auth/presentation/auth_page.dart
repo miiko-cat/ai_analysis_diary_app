@@ -3,7 +3,10 @@ import 'package:ai_analysis_diary_app/features/auth/presentation/widgets/auth_fo
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'auth_mode.dart';
+enum AuthMode {
+  login,
+  signup,
+}
 
 class AuthPage extends ConsumerWidget {
   final AuthMode mode;
@@ -39,6 +42,7 @@ class AuthPage extends ConsumerWidget {
                       onEmailChanged: notifier.onEmailChanged,
                       onPasswordChanged: notifier.onPasswordChanged,
                       onSubmit: notifier.submit,
+                      onSwitchModeTap: notifier.onSwitchModeTap,
                     )
                   ),
                 ),
