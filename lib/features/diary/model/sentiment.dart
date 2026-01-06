@@ -24,11 +24,11 @@ extension SentimentUI on Sentiment? {
   IconData get icon {
     switch (this) {
       case Sentiment.positive:
-        return Icons.sentiment_satisfied;
+        return Icons.check_circle;
       case Sentiment.negative:
-        return Icons.sentiment_dissatisfied;
+        return Icons.error;
       case Sentiment.neutral:
-        return Icons.sentiment_neutral;
+        return Icons.remove_circle;
       default:
         return Icons.help_outline;
     }
@@ -38,11 +38,11 @@ extension SentimentUI on Sentiment? {
   Color get color {
     switch (this) {
       case Sentiment.positive:
-        return Colors.green;
+        return Color(0xFF2E7D32);
       case Sentiment.negative:
-        return Colors.red;
+        return Color(0xFFD32F2F);
       case Sentiment.neutral:
-        return Colors.grey;
+        return Color(0xFF616161);
       default:
         return Colors.blueGrey;
     }
