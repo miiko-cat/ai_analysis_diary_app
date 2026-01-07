@@ -4,6 +4,7 @@ import 'package:ai_analysis_diary_app/features/auth/domain/validate_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/dialog_service.dart';
 import '../../repository/auth_providers.dart';
 import '../auth_page.dart';
 import 'auth_state.dart';
@@ -16,7 +17,11 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
 
   AuthViewModel(this._mode);
 
+  // 認証Repository取得
   late final _repository = ref.read(authRepositoryProvider);
+
+  // 共通DialogService取得
+  late final _dialogService = ref.read(dialogServiceProvider);
 
   @override
   Future<AuthState> build() async {
@@ -53,10 +58,14 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     state = AsyncData(current.copyWith(isLoading: true));
 
     try {
-      final result = _mode == AuthMode.login
-          ? await _repository.signIn(current.email, current.password)
-          : await _repository.signUp(current.email, current.password);
-
+      if (_mode == AuthMode.login) {
+        // ログイン
+        await _repository.signIn(current.email, current.password);
+      } else {
+        // サインアップとDialog表示
+        await _repository.signUp(current.email, current.password);
+        _dialogService.show(DialogRequest(DialogType.signupSuccess));
+      }
       state = AsyncData(current);
     } catch (e) {
       state = AsyncData(current.copyWith(errorMessage: e.toString()));
