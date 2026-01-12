@@ -1,56 +1,74 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../features/auth/repository/auth_providers.dart';
 import '../dialog_service.dart';
 
-class AppDialogListener extends ConsumerWidget {
+class AppDialogListener extends ConsumerStatefulWidget {
   final Widget child;
 
   const AppDialogListener({super.key, required this.child});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<DialogService>(
-      dialogServiceProvider,
-          (_, _) {},
-    );
+  ConsumerState<AppDialogListener> createState() => _AppDialogListenerState();
+}
 
-    ref.listen(
-      dialogServiceProvider.select((s) => s.stream),
-          (_, stream) {
-        stream.listen((request) {
-          _showDialog(context, request);
-        });
-      },
-    );
+class _AppDialogListenerState extends ConsumerState<AppDialogListener> {
+  StreamSubscription<DialogRequest>? _subscription;
 
-    return child;
+  @override
+  void initState() {
+    super.initState();
+
+    final service = ref.read(dialogServiceProvider);
+    _subscription = service.stream.listen((request) {
+      if (!mounted) return;
+      _showDialog(request);
+    });
   }
 
-  void _showDialog(BuildContext context, DialogRequest request) {
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+
+  void _showDialog(DialogRequest request) {
+    final authRepo = ref.watch(authRepositoryProvider);
+
     switch (request.type) {
       case DialogType.signupSuccess:
-        showDialog(
+        showDialog<bool>(
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('サインアップ成功'),
             content: const Text(
               '登録したメールアドレスにメールを送信しました。\n\n'
-                  'メールのリンクをタップし、ログインしてください。',
+              'メールのリンクをタップし、ログインしてください。',
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context, true),
                 child: const Text('OK'),
               ),
             ],
           ),
-        );
+        ).then((result) {
+          if (result == true && mounted) {
+            Navigator.of(context).pop();
+          }
+        });
         break;
 
       case DialogType.confirmLogout:
-        showDialog(
+        showDialog<bool>(
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('ログアウト確認'),
@@ -62,14 +80,17 @@ class AppDialogListener extends ConsumerWidget {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  // 実際のログアウト処理
+                  Navigator.pop(context, true);
                 },
                 child: const Text('ログアウト'),
               ),
             ],
           ),
-        );
+        ).then((result) async {
+          if (result == true && mounted) {
+            await authRepo.signOut();
+          }
+        });
         break;
     }
   }

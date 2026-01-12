@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final dialogServiceProvider = Provider.autoDispose<DialogService>((ref) {
+final dialogServiceProvider = Provider<DialogService>((ref) {
   final service = DialogService();
   ref.onDispose(service.dispose);
   return service;

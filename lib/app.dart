@@ -3,6 +3,7 @@ import 'package:ai_analysis_diary_app/features/auth/repository/auth_providers.da
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/utils/widget/app_dialog_listener.dart';
 import 'features/home/presentation/home_page.dart';
 
 class AiAnalysisDiaryApp extends StatelessWidget {
@@ -16,7 +17,7 @@ class AiAnalysisDiaryApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
         fontFamily: 'NotoSansJP',
       ),
-      home: const AuthGate(),
+      home: AppDialogListener(child: const AuthGate()),
     );
   }
 }
@@ -38,7 +39,7 @@ class AuthGate extends ConsumerWidget {
       },
       error: (e, _) => Scaffold(body: Center(child: Text('エラー: $e'))),
       loading: () =>
-      const Scaffold(body: Center(child: CircularProgressIndicator())),
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
     );
   }
 }

@@ -112,7 +112,9 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : Text('ログイン'),
+                      : widget.mode == AuthMode.login
+                      ? Text('ログイン')
+                      : Text('サインアップ'),
                 ),
               ),
 
