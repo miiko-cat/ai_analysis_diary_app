@@ -4,6 +4,7 @@ import 'package:ai_analysis_diary_app/features/home/presentation/widgets/sort_ba
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/dialog_service.dart';
 import '../../auth/repository/auth_providers.dart';
 import '../../diary/repository/diary_providers.dart';
 import 'widgets/display_list.dart';
@@ -27,13 +28,17 @@ class HomePageState extends ConsumerState<HomePage> {
     final diaryRepository = ref.watch(diaryRepositoryProvider);
     // ログイン中のユーザを取得
     final currentUser = ref.watch(currentUserProvider);
+    // 最終ログアウト確認を実装
+    // TODO 後でViewModel化
+    final dialogService = ref.read(dialogServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('日記一覧'),
         actions: [
           IconButton(
-            onPressed: () => authRepo.signOut(),
+            onPressed: () =>
+                dialogService.show(DialogRequest(DialogType.confirmLogout)),
             icon: Icon(Icons.logout),
           ),
         ],
