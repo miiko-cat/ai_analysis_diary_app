@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:ai_analysis_diary_app/features/auth/domain/validate_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../../core/utils/dialog_service.dart';
+import '../../../../core/utils/widget/app_loading_overlay.dart';
 import '../../repository/auth_providers.dart';
 import '../auth_page.dart';
 import 'auth_state.dart';
@@ -22,6 +24,11 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
 
   // 共通DialogService取得
   late final _dialogService = ref.read(dialogServiceProvider);
+
+  // ローディング状態管理
+  late final StateController<bool> _loadingController = ref.read(
+    loadingProvider.notifier,
+  );
 
   @override
   Future<AuthState> build() async {
@@ -51,12 +58,15 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   // ====== 送信処理 ======
   Future<void> submit() async {
     final current = state.requireValue;
+
     // バリデーションNG or ローディング中
-    if (!current.isValid || current.isLoading) {
+    if (!current.isValid || state.isLoading) {
       return;
     }
-    state = AsyncData(current.copyWith(isLoading: true));
 
+    // ローディング中
+    _loadingController.state = true;
+    state = const AsyncLoading();
     try {
       if (_mode == AuthMode.login) {
         // ログイン
@@ -70,7 +80,8 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     } catch (e) {
       state = AsyncData(current.copyWith(errorMessage: e.toString()));
     } finally {
-      state = AsyncData(current.copyWith(isLoading: false));
+      // ローディング解除
+      _loadingController.state = false;
     }
   }
 
