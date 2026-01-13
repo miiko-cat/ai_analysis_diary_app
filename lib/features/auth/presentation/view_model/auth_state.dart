@@ -3,9 +3,6 @@ class AuthState {
   final String email;
   final String password;
 
-  // 読み込み中
-  final bool isLoading;
-
   // エラーメッセージ
   final String? emailError;
   final String? passwordError;
@@ -14,7 +11,6 @@ class AuthState {
   const AuthState({
     this.email = '',
     this.password = '',
-    this.isLoading = false,
     this.emailError,
     this.passwordError,
     this.errorMessage,
@@ -30,7 +26,6 @@ class AuthState {
   AuthState copyWith({
     String? email,
     String? password,
-    bool? isLoading,
     String? emailError,
     String? passwordError,
     String? errorMessage,
@@ -38,7 +33,6 @@ class AuthState {
     return AuthState(
       email: email ?? this.email,
       password: password ?? this.password,
-      isLoading: isLoading ?? this.isLoading,
       emailError: emailError,
       passwordError: passwordError,
       errorMessage: errorMessage,
