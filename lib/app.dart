@@ -1,6 +1,7 @@
 import 'package:ai_analysis_diary_app/features/auth/presentation/auth_page.dart';
 import 'package:ai_analysis_diary_app/features/auth/repository/auth_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/utils/widget/app_dialog_listener.dart';
@@ -13,6 +14,12 @@ class AiAnalysisDiaryApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AIセラピー日記',
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [Locale('ja'), Locale('en')],
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
         fontFamily: 'NotoSansJP',
