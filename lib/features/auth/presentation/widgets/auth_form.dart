@@ -105,14 +105,10 @@ class _AuthFormState extends ConsumerState<AuthForm> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: widget.state.isLoading ? null : widget.onSubmit,
-                  child: widget.state.isLoading
-                      ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text('ログイン'),
+                  onPressed: widget.onSubmit,
+                  child: widget.mode == AuthMode.login
+                      ? Text('ログイン')
+                      : Text('サインアップ'),
                 ),
               ),
 

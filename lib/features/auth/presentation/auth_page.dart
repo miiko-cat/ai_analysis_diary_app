@@ -3,10 +3,9 @@ import 'package:ai_analysis_diary_app/features/auth/presentation/widgets/auth_fo
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum AuthMode {
-  login,
-  signup,
-}
+import '../../../core/utils/widget/app_loading_overlay.dart';
+
+enum AuthMode { login, signup }
 
 class AuthPage extends ConsumerWidget {
   final AuthMode mode;
@@ -18,38 +17,40 @@ class AuthPage extends ConsumerWidget {
     final state = ref.watch(authViewModelProvider(mode));
     final notifier = ref.read(authViewModelProvider(mode).notifier);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(mode == AuthMode.login ? 'ログイン' : 'サインアップ')),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(16),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight * 0.8,
-              ),
-              child: Center(
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: AuthForm(
-                      mode: mode,
-                      state: state,
-                      onEmailChanged: notifier.onEmailChanged,
-                      onPasswordChanged: notifier.onPasswordChanged,
-                      onSubmit: notifier.submit,
-                      onSwitchModeTap: notifier.onSwitchModeTap,
-                    )
+    return AppLoadingOverlay(
+      child: Scaffold(
+        appBar: AppBar(title: Text(mode == AuthMode.login ? 'ログイン' : 'サインアップ')),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight * 0.8,
+                ),
+                child: Center(
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: AuthForm(
+                        mode: mode,
+                        state: state,
+                        onEmailChanged: notifier.onEmailChanged,
+                        onPasswordChanged: notifier.onPasswordChanged,
+                        onSubmit: notifier.submit,
+                        onSwitchModeTap: notifier.onSwitchModeTap,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

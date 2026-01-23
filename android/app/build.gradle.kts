@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.ai_analysis_diary_app"
+    namespace = "io.github.miiko_cat.ai_analysis_diary_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.ai_analysis_diary_app"
+        applicationId = "io.github.miiko_cat.ai_analysis_diary_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -35,6 +35,36 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
+    flavorDimensions += "default"
+    productFlavors {
+        create("local") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "[local]AI分析日記アプリ"
+            )
+            applicationIdSuffix = ".local"
+        }
+        create("dev") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "[dev]AI分析日記アプリ"
+            )
+            applicationIdSuffix = ".dev"
+        }
+        create("prod") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "AI分析日記アプリ"
+            )
         }
     }
 }
