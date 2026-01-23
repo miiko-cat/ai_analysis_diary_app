@@ -193,7 +193,7 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                                   try {
                                     // 日記をDBに登録
                                     final diary = Diary(
-                                      date: _selectedDate!,
+                                      date: _selectedDate!.toUtc(),
                                       title: _titleController.text,
                                       description: _desController.text,
                                       userId: currentUser!.id,
