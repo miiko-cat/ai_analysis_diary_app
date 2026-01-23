@@ -13,7 +13,8 @@ import 'core/logging/sink/sentry_log_sink.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 環境変数読み込み
-  await dotenv.load(fileName: '.env');
+  const envFile = String.fromEnvironment('env');
+  await dotenv.load(fileName: envFile);
   // Supabase初期化
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
@@ -38,6 +39,7 @@ Future<void> main() async {
       // The sampling rate for profiling is relative to tracesSampleRate
       // Setting to 1.0 will profile 100% of sampled transactions:
       options.profilesSampleRate = 1.0;
+      options.environment = dotenv.env['SENTRY_ENVIRONMENT']!;
     },
     appRunner: () => runApp(SentryWidget(child: const ProviderScope(child: AiAnalysisDiaryApp()))),
   );
