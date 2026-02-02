@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/logging/logger_manager.dart';
 import '../../../core/utils/widget/app_loading_overlay.dart';
 import '../../../core/utils/widget/keyboard_dismiss.dart';
 import '../../auth/repository/auth_providers.dart';
@@ -189,7 +190,7 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                                     _isLoading = true;
                                   });
                                   loadingController.state = true;
-      
+
                                   try {
                                     // 日記をDBに登録
                                     final diary = Diary(
@@ -200,22 +201,24 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                                     );
                                     final response = await diaryRepository
                                         .insertDiary(diary);
-      
+
                                     // 日記をAIに分析させる
                                     await diaryRepository.analyzeDiary(
                                       response.userId,
                                       response.postId!,
                                     );
-      
+
                                     // 感情に応じたアドバイスを生成
                                     await diaryRepository.generateAdvice(
                                       response.userId,
                                       response.postId!,
                                     );
-      
+
                                     // 日記投稿完了
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(
                                           content: Text("日記投稿完了！"),
                                           duration: Duration(seconds: 2),
@@ -223,9 +226,17 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                                       );
                                       Navigator.pop(context);
                                     }
-                                  } catch (e) {
+                                  } catch (error, stack) {
+                                    LoggerManager().error(
+                                      "日記作成時にエラーが発生しました",
+                                      error: error,
+                                      stackTrace: stack,
+                                    );
+
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(content: Text('投稿に失敗しました')),
                                       );
                                     }
