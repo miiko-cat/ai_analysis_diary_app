@@ -33,7 +33,7 @@ Future<void> main() async {
 
       // Logger初期化
       if (!kIsWeb) {
-        // Webアプリケーション出ないときに、FileLogを出力
+        // Webアプリケーションでないときに、FileLogを出力
         LoggerManager().addSink(FileLogSink());
       }
       LoggerManager().addSink(SentryLogSink());

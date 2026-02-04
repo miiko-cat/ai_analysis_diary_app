@@ -162,7 +162,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# 設定ファイルを除外
 dart_defines/.env.dev
 dart_defines/.env.local
 dart_defines/.env.prod
 sentry.properties
+.firebase
