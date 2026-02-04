@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:ai_analysis_diary_app/app.dart';
+import 'package:ai_analysis_diary_app/core/config/load_app_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,12 +21,11 @@ Future<void> main() async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       // 環境変数読み込み
-      const envFile = String.fromEnvironment('env');
-      await dotenv.load(fileName: envFile);
+      final config = await loadAppConfig();
       // Supabase初期化
       await Supabase.initialize(
-        url: dotenv.env['SUPABASE_URL']!,
-        anonKey: dotenv.env['SUPABASE_API_KEY']!,
+        url: config.supabaseUrl,
+        anonKey: config.supabaseKey,
         // Supabaseのdeeplinkを適用するために追記
         authOptions: FlutterAuthClientOptions(authFlowType: AuthFlowType.pkce),
       );
@@ -40,10 +39,10 @@ Future<void> main() async {
 
       // SentryFlutter初期化
       await SentryFlutter.init((options) {
-        options.dsn = dotenv.env['SENTRY_FLUTTER_DNS']!;
+        options.dsn = config.sentryDsn;
         options.tracesSampleRate = 1.0;
         options.profilesSampleRate = 1.0;
-        options.environment = dotenv.env['SENTRY_ENVIRONMENT']!;
+        options.environment = config.sentryEnv;
       });
       runApp(
         SentryWidget(child: const ProviderScope(child: AiAnalysisDiaryApp())),
