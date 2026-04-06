@@ -33,6 +33,15 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
 
+      - name: KeyStore検証
+        run: |
+          echo "=== ファイルサイズ確認 ==="
+          ls -la android/app/keystore.jks
+          echo "=== keytoolで検証 ==="
+          keytool -list -keystore android/app/keystore.jks \
+            -storepass "${{ secrets.STORE_PASSWORD }}" \
+            -alias "${{ secrets.KEY_ALIAS }}"
+
       - name: key.propertiesを生成
         run: |
           cat > android/key.properties << EOF
