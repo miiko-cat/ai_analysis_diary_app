@@ -8,7 +8,7 @@ Future<AppConfig> loadAppConfig() async {
     // Web: dart-define
     const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
     const supabaseKey = String.fromEnvironment('SUPABASE_API_KEY');
-    const sentryDsn = String.fromEnvironment('SENTRY_FLUTTER_DNS');
+    const sentryDsn = String.fromEnvironment('SENTRY_FLUTTER_DSN');
     const sentryEnv = String.fromEnvironment('SENTRY_ENVIRONMENT');
 
     // 引数チェック
@@ -30,7 +30,7 @@ Future<AppConfig> loadAppConfig() async {
     return AppConfig(
       supabaseUrl: dotenv.env['SUPABASE_URL']!,
       supabaseKey: dotenv.env['SUPABASE_API_KEY']!,
-      sentryDsn: dotenv.env['SENTRY_FLUTTER_DNS']!,
+      sentryDsn: dotenv.env['SENTRY_FLUTTER_DSN']!,
       sentryEnv: dotenv.env['SENTRY_ENVIRONMENT']!,
     );
   }
