@@ -33,23 +33,16 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
 
-      - name: KeyStore検証
-        run: |
-          echo "=== ファイルサイズ確認 ==="
-          ls -la android/app/keystore.jks
-          echo "=== keytoolで検証 ==="
-          keytool -list -keystore android/app/keystore.jks \
-            -storepass "${{ secrets.STORE_PASSWORD }}" \
-            -alias "${{ secrets.KEY_ALIAS }}"
-
       - name: key.propertiesを生成
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
-          cat > android/key.properties << EOF
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          storeFile=keystore.jks
-          storePassword=${{ secrets.STORE_PASSWORD }}
-          EOF
+          printf 'keyAlias=%s\nkeyPassword=%s\nstoreFile=keystore.jks\nstorePassword=%s\n' \
+            "$KEY_ALIAS" "$KEY_PASSWORD" "$STORE_PASSWORD" > android/key.properties
+          echo "=== key.properties確認 ==="
+          cat android/key.properties
 
       - name: ビルド確認
         run: flutter build apk --dart-define=env=dart_defines/.env.ci --flavor=prod
