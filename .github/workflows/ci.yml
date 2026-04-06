@@ -28,6 +28,19 @@ jobs:
           SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }}
           SENTRY_ENVIRONMENT=${{ vars.SENTRY_ENVIRONMENT }}
           EOF
+          
+      - name: KeyStoreファイルを生成
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+
+      - name: key.propertiesを生成
+        run: |
+          cat > android/key.properties << EOF
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          storeFile=app/keystore.jks
+          storePassword=${{ secrets.STORE_PASSWORD }}
+          EOF
 
       - name: ビルド確認
         run: flutter build apk --dart-define=env=dart_defines/.env.ci --flavor=prod
