@@ -20,6 +20,9 @@ jobs:
       - name: 依存関係のインストール
         run: flutter pub get
 
+      - name: 型チェックとlintルール適用
+        run: flutter analyze
+
       - name: 環境変数ファイルを生成
         run: |
           cat > dart_defines/.env.ci << EOF

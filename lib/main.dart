@@ -41,7 +41,6 @@ Future<void> main() async {
       await SentryFlutter.init((options) {
         options.dsn = config.sentryDsn;
         options.tracesSampleRate = 1.0;
-        options.profilesSampleRate = 1.0;
         options.environment = config.sentryEnv;
       });
       runApp(

@@ -23,7 +23,6 @@ class HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final authRepo = ref.watch(authRepositoryProvider);
     // 日記関連のRepositoryを取得
     final diaryRepository = ref.watch(diaryRepositoryProvider);
     // ログイン中のユーザを取得
