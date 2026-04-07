@@ -23,15 +23,6 @@ jobs:
       - name: 型チェックとlintルール適用
         run: flutter analyze
 
-      - name: 環境変数ファイルを生成
-        run: |
-          cat > dart_defines/.env.ci << EOF
-          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-          SUPABASE_API_KEY=${{ secrets.SUPABASE_API_KEY }}
-          SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }}
-          SENTRY_ENVIRONMENT=${{ vars.SENTRY_ENVIRONMENT }}
-          EOF
-          
       - name: KeyStoreファイルを生成
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
@@ -48,7 +39,7 @@ jobs:
           cat android/key.properties
 
       - name: ビルド確認
-        run: flutter build apk --dart-define=env=dart_defines/.env.ci --flavor=prod
+        run: flutter build apk --flavor=prod --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} --dart-define=SUPABASE_API_KEY=${{ secrets.SUPABASE_API_KEY }} --dart-define=SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }} --dart-define=SENTRY_ENVIRONMENT=${{ vars.SENTRY_ENVIRONMENT }}
 
       - name: テスト実行
         run: flutter test
