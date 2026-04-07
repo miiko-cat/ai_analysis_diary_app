@@ -11,29 +11,73 @@
 日記からAIで自分の行動や感情を振り返って、貴方の助けとなるようなアプリを目指します！
 
 ## 🚧現在のステータス
+Version 1.0.0 リリース完了
 
-鋭意制作中
+### Webアプリ
+https://flutter-ai-therapy-diary.web.app/
+### Androidアプリ
+準備中...
+### iOSアプリ
+準備中...
 
-- Supabase セットアップ：完了
-- テーブル作成：完了
-- 認証（ログイン/サインアップ/ログアウト）：完了
-- ホーム画面：完了
-- 日記作成画面：完了
-- 分析結果DB格納：完了
-- 過去の日記詳細画面：完了
+## アプリの実行方法
+- ライブラリをインストール
+```bash
+flutter pub get 
+```
+- アプリをビルド
 
-## 📝直近の TODO（詳細は Issues を参照）
-- 絵文字修正
-- ログアウト時の最終確認
-- 
+アプリビルド時に`--dart-define`の引数を指定する。それぞれ４つの項目を指定する
 
+| Key | Value |
+| --- | --- |
+| SUPABASE_URL | バックエンドで使用するSupabaseのプロジェクトURLを指定 |
+| SUPABASE_API_KEY | SupabaseのAPIキーを指定 |
+| SENTRY_FLUTTER_DSN | SENTRYのDSNを指定 |
+| SENTRY_ENVIRONMENT | "production"固定 |
+
+```bash
+flutter run --flavor prod --dart-define=SUPABASE_URL=https://xxxxx --dart-define=SUPABASE_API_KEY="xxxxx" --dart-define=SENTRY_FLUTTER_DSN="https://xxxxx" --dart-define=SENTRY_ENVIRONMENT="production"
+```
+
+## 📝直近の TODO
 詳細は Issues に記載しています
 
 ## 🛠 使用技術
-- Flutter 3.10+
+- Flutter 3.38.9
+- Dart 3.10.8
 - Riverpod
 - Supabase（Auth / Database）
-- Dart
+- Firebase
+- SENTRY
 
-## 📚 画面構成 & ER 図
-![ER図](supabase_ER.png)
+## 📚 画面構成
+```mermaid
+flowchart TB
+    login[ログイン画面]
+    signUp[サインアップ画面]
+    home[Home画面]
+    createDiary[日記投稿画面]
+    detailDiary[日記詳細画面]
+    
+    login -- アカウントがない場合 --> signUp
+    signUp -- 戻る --> login
+    login -- Home画面に遷移 --> home
+    home -- 日記を作成 --> createDiary
+    createDiary -- 戻る --> home
+    home -- 日記の詳細を確認 --> detailDiary
+    detailDiary -- 戻る --> home
+```
+### ログイン画面
+![ログイン画面](images/login.png)
+### サインアップ画面
+![サインアップ画面](images/signUp.png)
+### Home画面
+![Home画面](images/home.png)
+### 日記投稿画面
+![日記投稿画面](images/create_diary.png)
+### 日記詳細画面
+![日記詳細画面](images/detail_diary_1.png)
+![日記詳細画面](images/detail_diary_2.png)
+## 📈 ER 図
+![ER図](images/supabase_ER.png)
