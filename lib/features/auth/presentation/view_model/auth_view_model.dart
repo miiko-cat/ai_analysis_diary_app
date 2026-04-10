@@ -66,7 +66,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
 
     // ローディング中
     _loadingController.state = true;
-    state = const AsyncLoading();
     try {
       if (_mode == AuthMode.login) {
         // ログイン
