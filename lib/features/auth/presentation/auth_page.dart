@@ -28,12 +28,6 @@ class AuthPage extends ConsumerWidget {
     final state = ref.watch(authViewModelProvider(args));
     final notifier = ref.read(authViewModelProvider(args).notifier);
 
-    // 初回ビルド時に初期値をセット
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (initialEmail != null) notifier.onEmailChanged(initialEmail!);
-      if (initialPassword != null) notifier.onPasswordChanged(initialPassword!);
-    });
-
     return AppLoadingOverlay(
       child: Scaffold(
         appBar: AppBar(title: Text(mode == AuthMode.login ? 'ログイン' : 'サインアップ')),

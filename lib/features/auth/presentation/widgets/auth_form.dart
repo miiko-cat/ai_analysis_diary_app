@@ -57,6 +57,8 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
               /// メールアドレス入力
               TextFormField(
+                // サインアップ成功時に渡ってきたEメールを表示
+                initialValue: authState.email,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'メールアドレス',
@@ -70,6 +72,8 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
               /// パスワード入力
               TextFormField(
+                // サインアップ成功時に渡ってきたパスワードを表示
+                initialValue: authState.password,
                 obscureText: _isObscure,
                 keyboardType: TextInputType.visiblePassword,
                 autofillHints: [AutofillHints.password],

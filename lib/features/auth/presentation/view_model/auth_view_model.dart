@@ -34,7 +34,10 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   @override
   Future<AuthState> build() async {
     // 初期状態
-    return const AuthState();
+    return AuthState(
+      email: _args.initialEmail,
+      password: _args.initialPassword
+    );
   }
 
   // ====== 入力更新 ======
