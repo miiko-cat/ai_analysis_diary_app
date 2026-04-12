@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/utils/widget/app_dialog_listener.dart';
+import 'features/auth/presentation/auth_page_args.dart';
 import 'features/home/presentation/home_page.dart';
 
 class AiAnalysisDiaryApp extends StatelessWidget {

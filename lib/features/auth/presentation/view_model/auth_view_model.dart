@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ai_analysis_diary_app/features/auth/domain/validate_auth.dart';
+import 'package:ai_analysis_diary_app/features/auth/presentation/auth_page_args.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -12,12 +13,12 @@ import '../auth_page.dart';
 import 'auth_state.dart';
 
 final authViewModelProvider = AsyncNotifierProvider.autoDispose
-    .family<AuthViewModel, AuthState, AuthMode>(AuthViewModel.new);
+    .family<AuthViewModel, AuthState, AuthPageArgs>(AuthViewModel.new);
 
 class AuthViewModel extends AsyncNotifier<AuthState> {
-  final AuthMode _mode;
+  final AuthPageArgs _args;
 
-  AuthViewModel(this._mode);
+  AuthViewModel(this._args);
 
   // 認証Repository取得
   late final _repository = ref.read(authRepositoryProvider);
@@ -67,13 +68,19 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     // ローディング中
     _loadingController.state = true;
     try {
-      if (_mode == AuthMode.login) {
+      if (_args.mode == AuthMode.login) {
         // ログイン
         await _repository.signIn(current.email, current.password);
       } else {
         // サインアップとDialog表示
         await _repository.signUp(current.email, current.password);
-        _dialogService.show(DialogRequest(DialogType.signupSuccess));
+        _dialogService.show(
+            DialogRequest(
+              type : DialogType.signupSuccess,
+              email: current.email,
+              password: current.password
+            )
+        );
       }
       state = AsyncData(current);
     } catch (e) {
@@ -85,7 +92,7 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   }
 
   void onSwitchModeTap(BuildContext context) {
-    if (_mode == AuthMode.login) {
+    if (_args.mode == AuthMode.login) {
       Navigator.push(
         context,
         MaterialPageRoute(

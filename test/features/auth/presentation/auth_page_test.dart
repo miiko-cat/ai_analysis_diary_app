@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ai_analysis_diary_app/features/auth/presentation/auth_page.dart';
+import 'package:ai_analysis_diary_app/features/auth/presentation/auth_page_args.dart';
 import 'package:ai_analysis_diary_app/features/auth/repository/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -4,18 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/widget/app_loading_overlay.dart';
-
-enum AuthMode { login, signup }
+import 'auth_page_args.dart';
 
 class AuthPage extends ConsumerWidget {
   final AuthMode mode;
+  final String? initialEmail;
+  final String? initialPassword;
 
-  const AuthPage({super.key, required this.mode});
+  const AuthPage({
+    super.key,
+    required this.mode,
+    this.initialEmail,
+    this.initialPassword
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(authViewModelProvider(mode));
-    final notifier = ref.read(authViewModelProvider(mode).notifier);
+    final args = AuthPageArgs(
+      mode: mode,
+      initialEmail: initialEmail ?? '',
+      initialPassword: initialPassword ?? ''
+    );
+    final state = ref.watch(authViewModelProvider(args));
+    final notifier = ref.read(authViewModelProvider(args).notifier);
+
+    // 初回ビルド時に初期値をセット
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (initialEmail != null) notifier.onEmailChanged(initialEmail!);
+      if (initialPassword != null) notifier.onPasswordChanged(initialPassword!);
+    });
 
     return AppLoadingOverlay(
       child: Scaffold(

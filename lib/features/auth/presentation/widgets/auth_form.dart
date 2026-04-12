@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../auth_page.dart';
+import '../auth_page_args.dart';
 import '../view_model/auth_state.dart';
 
 class AuthForm extends ConsumerStatefulWidget {
