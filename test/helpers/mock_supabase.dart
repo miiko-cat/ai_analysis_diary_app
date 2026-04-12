@@ -1,3 +1,5 @@
+import 'package:ai_analysis_diary_app/features/auth/repository/auth_repository.dart';
+import 'package:ai_analysis_diary_app/features/diary/repository/diary_repository.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -8,3 +10,7 @@ class MockSupabaseAuth extends Mock implements GoTrueClient {}
 class MockAuthResponse extends Mock implements AuthResponse {}
 
 class MockUser extends Mock implements User {}
+
+class MockAuthRepository extends Mock implements AuthRepository {}
+
+class MockDiaryRepository extends Mock implements DiaryRepository {}

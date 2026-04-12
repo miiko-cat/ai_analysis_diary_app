@@ -247,15 +247,7 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                                     loadingController.state = false;
                                   }
                                 },
-                          child: _isLoading
-                              ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text('投稿'),
+                          child: Text('投稿'),
                         ),
                       ),
                     ],
