@@ -8,6 +8,7 @@ import '../view_model/auth_state.dart';
 class AuthForm extends ConsumerStatefulWidget {
   final AuthMode mode;
   final AsyncValue<AuthState> state;
+  final GlobalKey<FormState> formKey;
   final ValueChanged<String> onEmailChanged;
   final ValueChanged<String> onPasswordChanged;
   final VoidCallback onSubmit;
@@ -21,6 +22,7 @@ class AuthForm extends ConsumerStatefulWidget {
     required this.onPasswordChanged,
     required this.onSubmit,
     required this.onSwitchModeTap,
+    required this.formKey,
   });
 
   @override
@@ -28,7 +30,6 @@ class AuthForm extends ConsumerStatefulWidget {
 }
 
 class _AuthFormState extends ConsumerState<AuthForm> {
-  final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
 
   @override
@@ -43,7 +44,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
       ),
       data: (authState) {
         return Form(
-          key: _formKey,
+          key: widget.formKey ,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -65,7 +66,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                   prefixIcon: Icon(Icons.email),
                 ),
                 onChanged: widget.onEmailChanged,
-                validator: (_) => authState.emailError,
+                validator: validateEmail,
               ),
 
               SizedBox(height: 16),
@@ -92,7 +93,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
                   ),
                 ),
                 onChanged: widget.onPasswordChanged,
-                validator: (_) => authState.passwordError,
+                validator: validatePassword,
               ),
 
               if (authState.errorMessage != null) ...[

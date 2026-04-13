@@ -50,6 +50,7 @@ class AuthPage extends ConsumerWidget {
                       child: AuthForm(
                         mode: mode,
                         state: state,
+                        formKey: notifier.formKey,
                         onEmailChanged: notifier.onEmailChanged,
                         onPasswordChanged: notifier.onPasswordChanged,
                         onSubmit: notifier.submit,
