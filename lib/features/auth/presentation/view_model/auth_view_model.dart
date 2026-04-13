@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:ai_analysis_diary_app/features/auth/domain/validate_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -16,8 +15,10 @@ final authViewModelProvider = AsyncNotifierProvider.autoDispose
 
 class AuthViewModel extends AsyncNotifier<AuthState> {
   final AuthMode _mode;
-
   AuthViewModel(this._mode);
+
+  // GlobalKeyでヴァリデーションチェック
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   // 認証Repository取得
   late final _repository = ref.read(authRepositoryProvider);
@@ -41,7 +42,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     state = AsyncData(
       state.requireValue.copyWith(
         email: value,
-        emailError: validateEmail(value),
       ),
     );
   }
@@ -50,17 +50,20 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     state = AsyncData(
       state.requireValue.copyWith(
         password: value,
-        passwordError: validatePassword(value),
       ),
     );
   }
 
   // ====== 送信処理 ======
   Future<void> submit() async {
-    final current = state.requireValue;
+    final currentState = state.requireValue;
+    final currentFormKeyState = formKey.currentState;
 
     // バリデーションNG or ローディング中
-    if (!current.isValid || state.isLoading) {
+    if (!currentFormKeyState!.validate() ||
+        state.isLoading ||
+        _loadingController.state
+    ) {
       return;
     }
 
@@ -69,15 +72,15 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     try {
       if (_mode == AuthMode.login) {
         // ログイン
-        await _repository.signIn(current.email, current.password);
+        await _repository.signIn(currentState.email, currentState.password);
       } else {
         // サインアップとDialog表示
-        await _repository.signUp(current.email, current.password);
+        await _repository.signUp(currentState.email, currentState.password);
         _dialogService.show(DialogRequest(DialogType.signupSuccess));
       }
-      state = AsyncData(current);
+      state = AsyncData(currentState);
     } catch (e) {
-      state = AsyncData(current.copyWith(errorMessage: e.toString()));
+      state = AsyncData(currentState.copyWith(errorMessage: e.toString()));
     } finally {
       // ローディング解除
       _loadingController.state = false;
