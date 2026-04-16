@@ -32,10 +32,10 @@ class DisplayList extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            subtitle: Text(
-              DateFormat('yyyy/MM/dd HH:mm:ss').format(diary.date.toLocal()),
+            subtitle: Text(diary.description, overflow: TextOverflow.ellipsis),
+            trailing: Text(
+              DateFormat('yyyy/MM/dd').format(diary.date.toLocal()),
             ),
-            trailing: diary.sentiment.chip,
           ),
         );
       },
