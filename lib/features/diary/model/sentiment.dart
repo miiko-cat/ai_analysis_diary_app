@@ -24,11 +24,11 @@ extension SentimentUI on Sentiment? {
   IconData get icon {
     switch (this) {
       case Sentiment.positive:
-        return Icons.check_circle;
+        return Icons.sentiment_very_satisfied;
       case Sentiment.negative:
-        return Icons.error;
+        return Icons.sentiment_very_dissatisfied;
       case Sentiment.neutral:
-        return Icons.remove_circle;
+        return Icons.sentiment_neutral;
       default:
         return Icons.help_outline;
     }
