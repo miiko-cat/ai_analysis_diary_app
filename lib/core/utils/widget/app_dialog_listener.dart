@@ -62,8 +62,6 @@ class _AppDialogListenerState extends ConsumerState<AppDialogListener> {
           ),
         ).then((result) {
           if (result == true && mounted) {
-            // ポップアップを閉じる
-            Navigator.of(context).pop();
             // ログイン画面にメール・パスワードを渡して遷移
             Navigator.pop(context, (
               email: request.email,

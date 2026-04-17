@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ai_analysis_diary_app/features/auth/presentation/auth_page_args.dart';
+import 'package:ai_analysis_diary_app/features/auth/presentation/auth_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -14,14 +14,17 @@ import '../auth_page.dart';
 import 'auth_state.dart';
 
 final authViewModelProvider = AsyncNotifierProvider.autoDispose
-    .family<AuthViewModel, AuthViewState, AuthPageArgs>(AuthViewModel.new);
+    .family<AuthViewModel, AuthViewState, AuthMode>(AuthViewModel.new);
 
 class AuthViewModel extends AsyncNotifier<AuthViewState> {
-  final AuthPageArgs _args;
-  AuthViewModel(this._args);
+  final AuthMode _mode;
+  AuthViewModel(this._mode);
 
   // GlobalKeyでヴァリデーションチェック
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  // コントローラーを定義
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   // 認証Repository取得
   late final _repository = ref.read(authRepositoryProvider);
@@ -73,7 +76,7 @@ class AuthViewModel extends AsyncNotifier<AuthViewState> {
     // ローディング中
     _loadingController.state = true;
     try {
-      if (_args.mode == AuthMode.login) {
+      if (_mode == AuthMode.login) {
         // ログイン
         await _repository.signIn(currentState.email, currentState.password);
       } else {
@@ -99,7 +102,7 @@ class AuthViewModel extends AsyncNotifier<AuthViewState> {
   }
 
   void onSwitchModeTap(BuildContext context) async {
-    if (_args.mode == AuthMode.login) {
+    if (_mode == AuthMode.login) {
       final result = await Navigator.push<({String email, String password})>(
         context,
         MaterialPageRoute(
@@ -117,7 +120,11 @@ class AuthViewModel extends AsyncNotifier<AuthViewState> {
         );
       }
     } else {
-      Navigator.pop(context);
+      // Navigator.pop(context);
+      Navigator.pop(context, (
+          email: state.requireValue.email,
+          password: state.requireValue.password
+      ));
     }
   }
 }

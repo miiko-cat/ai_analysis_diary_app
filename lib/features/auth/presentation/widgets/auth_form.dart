@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/validate_auth.dart';
-import '../auth_page_args.dart';
+import '../auth_mode.dart';
 import '../view_model/auth_state.dart';
 
 class AuthForm extends ConsumerStatefulWidget {
   final AuthMode mode;
   final AsyncValue<AuthViewState> state;
   final GlobalKey<FormState> formKey;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
   final ValueChanged<String> onEmailChanged;
   final ValueChanged<String> onPasswordChanged;
   final VoidCallback onSubmit;
@@ -19,11 +21,13 @@ class AuthForm extends ConsumerStatefulWidget {
     super.key,
     required this.mode,
     required this.state,
+    required this.formKey,
+    required this.emailController,
+    required this.passwordController,
     required this.onEmailChanged,
     required this.onPasswordChanged,
     required this.onSubmit,
     required this.onSwitchModeTap,
-    required this.formKey,
   });
 
   @override
@@ -59,7 +63,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
               /// メールアドレス入力
               TextFormField(
-                initialValue: authState.email,
+                controller: widget.emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'メールアドレス',
@@ -73,7 +77,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
               /// パスワード入力
               TextFormField(
-                initialValue: authState.password,
+                controller: widget.passwordController,
                 obscureText: _isObscure,
                 keyboardType: TextInputType.visiblePassword,
                 autofillHints: [AutofillHints.password],
