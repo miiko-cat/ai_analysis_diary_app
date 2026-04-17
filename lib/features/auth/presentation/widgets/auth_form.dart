@@ -8,7 +8,7 @@ import '../view_model/auth_state.dart';
 
 class AuthForm extends ConsumerStatefulWidget {
   final AuthMode mode;
-  final AsyncValue<AuthState> state;
+  final AsyncValue<AuthViewState> state;
   final GlobalKey<FormState> formKey;
   final ValueChanged<String> onEmailChanged;
   final ValueChanged<String> onPasswordChanged;

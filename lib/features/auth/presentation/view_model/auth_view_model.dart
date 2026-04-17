@@ -4,21 +4,21 @@ import 'package:ai_analysis_diary_app/features/auth/presentation/auth_page_args.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/utils/dialog_service.dart';
 import '../../../../core/utils/widget/app_loading_overlay.dart';
+import '../../domain/auth_error_handling.dart';
 import '../../repository/auth_providers.dart';
 import '../auth_page.dart';
 import 'auth_state.dart';
 
 final authViewModelProvider = AsyncNotifierProvider.autoDispose
-    .family<AuthViewModel, AuthState, AuthPageArgs>(AuthViewModel.new);
+    .family<AuthViewModel, AuthViewState, AuthPageArgs>(AuthViewModel.new);
 
 class AuthViewModel extends AsyncNotifier<AuthState> {
   final AuthPageArgs _args;
-
   AuthViewModel(this._args);
-
   // GlobalKeyでヴァリデーションチェック
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -34,9 +34,9 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   );
 
   @override
-  Future<AuthState> build() async {
+  Future<AuthViewState> build() async {
     // 初期状態
-    return AuthState(
+    return AuthViewState(
       email: _args.initialEmail,
       password: _args.initialPassword
     );
@@ -90,6 +90,8 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
         );
       }
       state = AsyncData(currentState);
+    } on AuthApiException catch (e) {
+      state = AsyncData(currentState.copyWith(errorMessage: authErrorHandling(e)));
     } catch (e) {
       state = AsyncData(currentState.copyWith(errorMessage: e.toString()));
     } finally {
