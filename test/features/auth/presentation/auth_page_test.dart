@@ -159,102 +159,107 @@ void main() {
       });
     });
 
-    testWidgets('サインアップ成功後にダイアログが表示され、OKタップ後ログイン画面にメールとパスワードが表示される', (tester) async {
-      // signUpが成功するようにMockを設定
-      when(() => mockAuthRepository.signUp(any(), any()))
-        .thenAnswer((_) async => mockUser);
+    group('サインアップ成功後の処理', () {
+      testWidgets(
+          'サインアップ成功後にダイアログが表示され、OKタップ後ログイン画面にメールとパスワードが表示される', (
+          tester) async {
+        // signUpが成功するようにMockを設定
+        when(() => mockAuthRepository.signUp(any(), any()))
+            .thenAnswer((_) async => mockUser);
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            // 本物のSupabase通信をMockに差し替え
-            authRepositoryProvider.overrideWithValue(mockAuthRepository),
-          ],
-          child: MaterialApp(
-            // ダイアログをサインアップ後に表示されるために、
-            // AppDialogListenerでラップ
-            home: AppDialogListener(child: AuthPage(mode: AuthMode.signup)),
+        await tester.pumpWidget(
+            ProviderScope(
+              overrides: [
+                // 本物のSupabase通信をMockに差し替え
+                authRepositoryProvider.overrideWithValue(mockAuthRepository),
+              ],
+              child: MaterialApp(
+                // ダイアログをサインアップ後に表示されるために、
+                // AppDialogListenerでラップ
+                home: AppDialogListener(child: AuthPage(mode: AuthMode.login)),
+              ),
+            )
+        );
+        await tester.pumpAndSettle();
+
+        // サインアップ画面へ遷移
+        await tester.tap(find.byKey(Key('switchModeButton')));
+        await tester.pumpAndSettle();
+
+        // ① サインアップ画面に遷移していることを確認
+        expect(
+            find.byWidgetPredicate(
+                    (widget) =>
+                widget is AuthPage && widget.mode == AuthMode.signup
+            ),
+            findsOneWidget
+        );
+
+        // テストデータ
+        final testEmail = 'test@example.com';
+        final testPassword = 'Passw0rd1!';
+        // データを入力して、サインアップボタンをタップ
+        await enterAccountAndButtonTap(email: testEmail, password: testPassword, tester: tester);
+        await tester.pumpAndSettle();
+
+        // ② ダイアログが表示されることを確認
+        expect(find.text('サインアップ成功'), findsOneWidget);
+
+        // OKボタンをタップ
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
+
+        // ③ ログイン画面に遷移していることを確認
+        expect(
+            find.byWidgetPredicate(
+                    (widget) =>
+                widget is AuthPage && widget.mode == AuthMode.login
+            ),
+            findsOneWidget
+        );
+
+        // ④ メールアドレス、パスワードがデフォルト表示されていることを確認
+        expect(find.text(testEmail), findsOneWidget);
+        expect(find.text(testPassword), findsOneWidget);
+      });
+
+      testWidgets(
+          'サインアップ時にCircularProgressIndicatorが2つ以上表示されない', (
+          tester) async {
+        // Completerを使って、テスト終了後にTimerが残らないようにする
+        final completer = Completer<User>();
+
+        // signUpが呼ばれたら永遠に待ち続ける（ローディング状態を維持）
+        when(
+              () => mockAuthRepository.signUp(any(), any()),
+        ).thenAnswer((_) => completer.future);
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              // 本物のSupabase通信をMockに差し替え
+              authRepositoryProvider.overrideWithValue(mockAuthRepository),
+            ],
+            child: MaterialApp(home: AuthPage(mode: AuthMode.signup)),
           ),
-        )
-      );
-      await tester.pumpAndSettle();
+        );
 
-      // テストデータ
-      final testEmail = 'test@example.com';
-      final testPassword = 'Passw0rd1!';
+        // build()の完了を待つ（AsyncLoadingが解消されるまで）
+        await tester.pumpAndSettle();
 
-      // サインアップ時メールアドレスフィールド取得
-      final signUpEmailField = find.ancestor(
-          of: find.text('メールアドレス'),
-          matching: find.byType(TextFormField)
-      );
-      // サインアップ時パスワードフィールド取得
-      final signUpPasswordField = find.ancestor(
-          of: find.text('パスワード'),
-          matching: find.byType(TextFormField)
-      );
+        await enterAccountAndButtonTap(
+            email: 'test@example.com', password: 'Passw0rd1!', tester: tester);
 
-      // 入力
-      await tester.enterText(signUpEmailField, testEmail);
-      await tester.enterText(signUpPasswordField, testPassword);
+        // ローディング状態をレンダリング（非同期処理は完了させない）
+        await tester.pump();
 
-      // SignUpボタンをタップ
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pumpAndSettle();
+        // CircularProgressIndicatorが一つだけ
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-      // ① ダイアログが表示されることを確認
-      expect(find.text('サインアップ成功'), findsOneWidget);
-
-      // OKボタンをタップ
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
-
-      // ② ログイン画面に遷移していることを確認
-      expect(
-        find.byWidgetPredicate(
-          (widget) => widget is AuthPage && widget.mode == AuthMode.login
-        ),
-        findsOneWidget
-      );
-
-      // ③ メールアドレス、パスワードがデフォルト表示されていることを確認
-      expect(find.text(testEmail), findsOneWidget);
-      expect(find.text(testPassword), findsOneWidget);
-    });
-
-    testWidgets('サインアップ時にCircularProgressIndicatorが2つ以上表示されない', (tester) async {
-      // Completerを使って、テスト終了後にTimerが残らないようにする
-      final completer = Completer<User>();
-
-      // signUpが呼ばれたら永遠に待ち続ける（ローディング状態を維持）
-      when(
-        () => mockAuthRepository.signUp(any(), any()),
-      ).thenAnswer((_) => completer.future);
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            // 本物のSupabase通信をMockに差し替え
-            authRepositoryProvider.overrideWithValue(mockAuthRepository),
-          ],
-          child: MaterialApp(home: AuthPage(mode: AuthMode.signup)),
-        ),
-      );
-
-      // build()の完了を待つ（AsyncLoadingが解消されるまで）
-      await tester.pumpAndSettle();
-
-      await enterAccountAndButtonTap(email: 'test@example.com', password: 'Passw0rd1!', tester: tester);
-
-      // ローディング状態をレンダリング（非同期処理は完了させない）
-      await tester.pump();
-
-      // CircularProgressIndicatorが一つだけ
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-      // テスト終了前にCompleterを完了させてタイマーを解消
-      completer.completeError(Exception('テスト終了'));
-      await tester.pumpAndSettle();
+        // テスト終了前にCompleterを完了させてタイマーを解消
+        completer.completeError(Exception('テスト終了'));
+        await tester.pumpAndSettle();
+      });
     });
   });
 }

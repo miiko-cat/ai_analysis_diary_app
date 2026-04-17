@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -123,30 +122,19 @@ class _AuthFormState extends ConsumerState<AuthForm> {
               SizedBox(height: 16),
 
               /// 新規登録またはログインへのリンク
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(color: Colors.black87),
-                  children: [
-                    TextSpan(
-                      text: widget.mode == AuthMode.login
-                          ? 'アカウントがありませんか？'
-                          : 'すでにアカウントをお持ちの方はこちら',
+              Column(
+                children: [
+                  Text(widget.mode == AuthMode.login ? 'アカウントがありませんか？' : 'すでにアカウントをお持ちの方はこちら'),
+                  GestureDetector(
+                    key: Key('switchModeButton'),
+                    onTap: () => widget.onSwitchModeTap(context),
+                    child: Text(
+                      widget.mode == AuthMode.login ? '新規ユーザ登録' : 'ログイン画面',
+                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationColor: Colors.blue),
                     ),
-                    TextSpan(text: '\n'),
-                    TextSpan(
-                      text: widget.mode == AuthMode.login
-                          ? '新規ユーザ登録'
-                          : 'ログイン画面',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => widget.onSwitchModeTap(context),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                ],
+              )
             ],
           ),
         );
