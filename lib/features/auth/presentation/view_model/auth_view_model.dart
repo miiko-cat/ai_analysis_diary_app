@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ai_analysis_diary_app/features/auth/presentation/auth_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -21,6 +22,9 @@ class AuthViewModel extends AsyncNotifier<AuthViewState> {
 
   // GlobalKeyでヴァリデーションチェック
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  // コントローラーを定義
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   // 認証Repository取得
   late final _repository = ref.read(authRepositoryProvider);
@@ -36,7 +40,7 @@ class AuthViewModel extends AsyncNotifier<AuthViewState> {
   @override
   Future<AuthViewState> build() async {
     // 初期状態
-    return const AuthViewState();
+    return AuthViewState();
   }
 
   // ====== 入力更新 ======
@@ -78,7 +82,13 @@ class AuthViewModel extends AsyncNotifier<AuthViewState> {
       } else {
         // サインアップとDialog表示
         await _repository.signUp(currentState.email, currentState.password);
-        _dialogService.show(DialogRequest(DialogType.signupSuccess));
+        _dialogService.show(
+            DialogRequest(
+              type : DialogType.signupSuccess,
+              email: currentState.email,
+              password: currentState.password
+            )
+        );
       }
       state = AsyncData(currentState);
     } on AuthApiException catch (e) {
@@ -91,16 +101,30 @@ class AuthViewModel extends AsyncNotifier<AuthViewState> {
     }
   }
 
-  void onSwitchModeTap(BuildContext context) {
+  void onSwitchModeTap(BuildContext context) async {
     if (_mode == AuthMode.login) {
-      Navigator.push(
+      final result = await Navigator.push<({String email, String password})>(
         context,
         MaterialPageRoute(
           builder: (context) => AuthPage(mode: AuthMode.signup),
         ),
       );
+
+      if (result != null && context.mounted) {
+        // サインアップ画面から返ってきたメールとパスワードをセット
+        state = AsyncData(
+          state.requireValue.copyWith(
+            email: result.email,
+            password: result.password,
+          ),
+        );
+      }
     } else {
-      Navigator.pop(context);
+      // Navigator.pop(context);
+      Navigator.pop(context, (
+          email: state.requireValue.email,
+          password: state.requireValue.password
+      ));
     }
   }
 }

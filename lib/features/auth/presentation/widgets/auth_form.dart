@@ -1,15 +1,16 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/validate_auth.dart';
-import '../auth_page.dart';
+import '../auth_mode.dart';
 import '../view_model/auth_state.dart';
 
 class AuthForm extends ConsumerStatefulWidget {
   final AuthMode mode;
   final AsyncValue<AuthViewState> state;
   final GlobalKey<FormState> formKey;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
   final ValueChanged<String> onEmailChanged;
   final ValueChanged<String> onPasswordChanged;
   final VoidCallback onSubmit;
@@ -19,11 +20,13 @@ class AuthForm extends ConsumerStatefulWidget {
     super.key,
     required this.mode,
     required this.state,
+    required this.formKey,
+    required this.emailController,
+    required this.passwordController,
     required this.onEmailChanged,
     required this.onPasswordChanged,
     required this.onSubmit,
     required this.onSwitchModeTap,
-    required this.formKey,
   });
 
   @override
@@ -59,6 +62,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
               /// メールアドレス入力
               TextFormField(
+                controller: widget.emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'メールアドレス',
@@ -72,6 +76,7 @@ class _AuthFormState extends ConsumerState<AuthForm> {
 
               /// パスワード入力
               TextFormField(
+                controller: widget.passwordController,
                 obscureText: _isObscure,
                 keyboardType: TextInputType.visiblePassword,
                 autofillHints: [AutofillHints.password],
@@ -117,30 +122,19 @@ class _AuthFormState extends ConsumerState<AuthForm> {
               SizedBox(height: 16),
 
               /// 新規登録またはログインへのリンク
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(color: Colors.black87),
-                  children: [
-                    TextSpan(
-                      text: widget.mode == AuthMode.login
-                          ? 'アカウントがありませんか？'
-                          : 'すでにアカウントをお持ちの方はこちら',
+              Column(
+                children: [
+                  Text(widget.mode == AuthMode.login ? 'アカウントがありませんか？' : 'すでにアカウントをお持ちの方はこちら'),
+                  GestureDetector(
+                    key: Key('switchModeButton'),
+                    onTap: () => widget.onSwitchModeTap(context),
+                    child: Text(
+                      widget.mode == AuthMode.login ? '新規ユーザ登録' : 'ログイン画面',
+                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, decorationColor: Colors.blue),
                     ),
-                    TextSpan(text: '\n'),
-                    TextSpan(
-                      text: widget.mode == AuthMode.login
-                          ? '新規ユーザ登録'
-                          : 'ログイン画面',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => widget.onSwitchModeTap(context),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                ],
+              )
             ],
           ),
         );
