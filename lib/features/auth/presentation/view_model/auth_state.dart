@@ -1,4 +1,4 @@
-class AuthState {
+class AuthViewState {
   // 画面のパラメータ
   final String email;
   final String password;
@@ -6,20 +6,20 @@ class AuthState {
   // エラーメッセージ
   final String? errorMessage;
 
-  const AuthState({
+  const AuthViewState({
     this.email = '',
     this.password = '',
     this.errorMessage,
   });
 
-  AuthState copyWith({
+  AuthViewState copyWith({
     String? email,
     String? password,
     String? emailError,
     String? passwordError,
     String? errorMessage,
   }) {
-    return AuthState(
+    return AuthViewState(
       email: email ?? this.email,
       password: password ?? this.password,
       errorMessage: errorMessage,
