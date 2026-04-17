@@ -16,9 +16,10 @@ import 'auth_state.dart';
 final authViewModelProvider = AsyncNotifierProvider.autoDispose
     .family<AuthViewModel, AuthViewState, AuthPageArgs>(AuthViewModel.new);
 
-class AuthViewModel extends AsyncNotifier<AuthState> {
+class AuthViewModel extends AsyncNotifier<AuthViewState> {
   final AuthPageArgs _args;
   AuthViewModel(this._args);
+
   // GlobalKeyでヴァリデーションチェック
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -36,10 +37,7 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   @override
   Future<AuthViewState> build() async {
     // 初期状態
-    return AuthViewState(
-      email: _args.initialEmail,
-      password: _args.initialPassword
-    );
+    return AuthViewState();
   }
 
   // ====== 入力更新 ======
@@ -100,14 +98,24 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     }
   }
 
-  void onSwitchModeTap(BuildContext context) {
+  void onSwitchModeTap(BuildContext context) async {
     if (_args.mode == AuthMode.login) {
-      Navigator.push(
+      final result = await Navigator.push<({String email, String password})>(
         context,
         MaterialPageRoute(
           builder: (context) => AuthPage(mode: AuthMode.signup),
         ),
       );
+
+      if (result != null && context.mounted) {
+        // サインアップ画面から返ってきたメールとパスワードをセット
+        state = AsyncData(
+          state.requireValue.copyWith(
+            email: result.email,
+            password: result.password,
+          ),
+        );
+      }
     } else {
       Navigator.pop(context);
     }

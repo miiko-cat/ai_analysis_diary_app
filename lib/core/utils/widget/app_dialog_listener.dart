@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../features/auth/presentation/auth_page.dart';
-import '../../../features/auth/presentation/auth_page_args.dart';
 import '../../../features/auth/repository/auth_providers.dart';
 import '../dialog_service.dart';
 
@@ -64,16 +62,13 @@ class _AppDialogListenerState extends ConsumerState<AppDialogListener> {
           ),
         ).then((result) {
           if (result == true && mounted) {
+            // ポップアップを閉じる
+            Navigator.of(context).pop();
             // ログイン画面にメール・パスワードを渡して遷移
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => AuthPage(
-                  mode: AuthMode.login,
-                  initialEmail: request.email,
-                  initialPassword: request.password,
-                ),
-              ),
-            );
+            Navigator.pop(context, (
+              email: request.email,
+              password: request.password
+            ));
           }
         });
         break;
