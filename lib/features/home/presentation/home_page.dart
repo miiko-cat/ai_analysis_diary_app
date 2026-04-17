@@ -36,8 +36,9 @@ class HomePageState extends ConsumerState<HomePage> {
         title: Text('日記一覧'),
         actions: [
           IconButton(
-            onPressed: () =>
-                dialogService.show(DialogRequest(DialogType.confirmLogout)),
+            onPressed: () => dialogService.show(
+              DialogRequest(type: DialogType.confirmLogout),
+            ),
             icon: Icon(Icons.logout),
           ),
         ],

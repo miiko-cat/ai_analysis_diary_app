@@ -12,8 +12,11 @@ enum DialogType { signupSuccess, confirmLogout }
 
 class DialogRequest {
   final DialogType type;
+  // サインアップ後に、Login画面に渡すメールアドレスとパスワード
+  final String? email;
+  final String? password;
 
-  DialogRequest(this.type);
+  DialogRequest({required this.type, this.email, this.password});
 }
 
 class DialogService {
