@@ -3,17 +3,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/utils/dialog_service.dart';
 import '../../../../core/utils/widget/app_loading_overlay.dart';
+import '../../domain/auth_error_handling.dart';
 import '../../repository/auth_providers.dart';
 import '../auth_page.dart';
 import 'auth_state.dart';
 
 final authViewModelProvider = AsyncNotifierProvider.autoDispose
-    .family<AuthViewModel, AuthState, AuthMode>(AuthViewModel.new);
+    .family<AuthViewModel, AuthViewState, AuthMode>(AuthViewModel.new);
 
-class AuthViewModel extends AsyncNotifier<AuthState> {
+class AuthViewModel extends AsyncNotifier<AuthViewState> {
   final AuthMode _mode;
   AuthViewModel(this._mode);
 
@@ -32,9 +34,9 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   );
 
   @override
-  Future<AuthState> build() async {
+  Future<AuthViewState> build() async {
     // 初期状態
-    return const AuthState();
+    return const AuthViewState();
   }
 
   // ====== 入力更新 ======
@@ -79,6 +81,8 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
         _dialogService.show(DialogRequest(DialogType.signupSuccess));
       }
       state = AsyncData(currentState);
+    } on AuthApiException catch (e) {
+      state = AsyncData(currentState.copyWith(errorMessage: authErrorHandling(e)));
     } catch (e) {
       state = AsyncData(currentState.copyWith(errorMessage: e.toString()));
     } finally {
