@@ -11,10 +11,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci && npm run build
+
+      - name: Flutterをセットアップ
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+
+      - name: 依存関係をインストール
+        run: flutter pub get
+
+      - name: Flutter Web をビルド
+        run: flutter build web --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} --dart-define=SUPABASE_API_KEY=${{ secrets.SUPABASE_API_KEY }} --dart-define=SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }} --dart-define=SENTRY_ENVIRONMENT=${{ vars.SENTRY_ENVIRONMENT }}
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLUTTER_AI_THERAPY_DIARY }}
           channelId: live
           projectId: flutter-ai-therapy-diary
+          entryPoint: "."
