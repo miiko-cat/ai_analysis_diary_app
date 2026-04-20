@@ -1,3 +1,4 @@
+import 'package:ai_analysis_diary_app/features/diary/domain/diary_exception.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../model/diary.dart';
@@ -18,14 +19,20 @@ class DiaryRepository {
   Future<void> delete(String? postId) async {
     // postId が null の可能性を考慮してガード
     if (postId == null) {
-      throw Exception('削除対象のポストIDが見つかりません');
+      throw DiaryException(
+        message: '削除対象のポストIDがありません',
+        code: DiaryErrorCode.invalidPostId
+      );
     }
 
     final response = await supabase.from('diary').delete().eq('post_id', postId).select().maybeSingle();
 
     // データが見つからなかった（既に削除された）
     if (response == null) {
-      throw Exception('データが見つからないため、削除されませんでした');
+      throw DiaryException(
+        message: 'データが見つからないため、削除されませんでした',
+        code: DiaryErrorCode.notFound,
+      );
     }
   }
 
