@@ -72,8 +72,10 @@ class HomePageState extends ConsumerState<HomePage> {
                 }
                 return DisplayList(
                   diaries: diaries,
-                  navigateToDetail: (diary) {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => DetailDiary(diary: diary)));
+                  navigateToDetail: (diary) async {
+                    await Navigator.push(context, MaterialPageRoute(builder: (_) => DetailDiary(diary: diary)));
+                    // 詳細画面から戻ってきたら再取得
+                    ref.invalidate(diariesProvider);
                   },
                 );
               },
