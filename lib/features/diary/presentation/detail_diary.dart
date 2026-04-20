@@ -16,7 +16,6 @@ class DetailDiary extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // 前の画面から渡ってきたDiaryWithAnalysisをViewModelに設定
     final state = ref.watch(detailDiaryVMProvider(diary));
-    // ignore: unused_local_variable
     final notifier = ref.read(detailDiaryVMProvider(diary).notifier);
 
     return AppLoadingOverlay(
@@ -43,6 +42,7 @@ class DetailDiary extends ConsumerWidget {
                 ],
               ),
             ),
+            bottomNavigationBar: bottomButtons(),
           );
         },
       ),
@@ -92,6 +92,33 @@ class DetailDiary extends ConsumerWidget {
           if (diary.summary != null) ...[summarySection(context, diary.summary!), SizedBox(height: 12)],
           if (diary.advice != null) adviceSection(context, diary.advice!),
         ],
+      ),
+    );
+  }
+
+  // ボトムナビゲーションバー（編集、削除ボタン）
+  Widget bottomButtons() {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: OutlinedButton.icon(
+                onPressed: () => {},
+                icon: Icon(Icons.delete_outline),
+                label: Text('削除'),
+                style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              flex: 2,
+              child: OutlinedButton.icon(onPressed: () => {}, icon: Icon(Icons.edit), label: Text('編集')),
+            ),
+          ],
+        ),
       ),
     );
   }

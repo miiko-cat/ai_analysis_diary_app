@@ -16,11 +16,9 @@ class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
   DetailDiaryViewModel(this._diary);
 
   // 共通DialogService取得
-  // ignore: unused_field
-  late final _ = ref.read(dialogServiceProvider);
+  late final _dialogService = ref.read(dialogServiceProvider);
 
   // ローディング状態管理
-  // ignore: unused_field
   late final StateController<bool> _loadingController = ref.read(loadingProvider.notifier);
 
   @override
@@ -28,4 +26,6 @@ class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
     // 初期状態
     return DetailDiaryState();
   }
+
+
 }
