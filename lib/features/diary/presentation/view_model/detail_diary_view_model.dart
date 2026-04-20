@@ -50,17 +50,19 @@ class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
         // 成功したら画面を閉じる（一覧に戻る）
         if (context.mounted) {
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('日記を削除しました')),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('日記を削除しました')));
         }
-      }
-      catch (e) {
+      } catch (e) {
         state = AsyncData(state.requireValue.copyWith(errorMessage: e.toString()));
       } finally {
         // ローディング解除
         _loadingController.state = false;
       }
     }
+  }
+
+  // エラーメッセージ削除
+  void clearError() {
+    state = AsyncData(state.requireValue.copyWith(errorMessage: null));
   }
 }

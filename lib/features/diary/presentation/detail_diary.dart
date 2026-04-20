@@ -14,9 +14,26 @@ class DetailDiary extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 前の画面から渡ってきたDiaryWithAnalysisをViewModelに設定
+    // Home画面から渡ってきたDiaryWithAnalysisをViewModelに設定
     final state = ref.watch(detailDiaryVMProvider(diary));
     final notifier = ref.read(detailDiaryVMProvider(diary).notifier);
+
+    // エラー状態を監視
+    ref.listen(detailDiaryVMProvider(diary), (previous, next) {
+      final errorMessage = next.value?.errorMessage;
+      // エラーメッセージが空でない場合にSnackBarを表示
+      if (errorMessage != null && errorMessage.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        ).closed.then((_) {
+          // Snackが閉じられたら、エラーメッセージを消去
+          notifier.clearError();
+        });
+      }
+    });
 
     return AppLoadingOverlay(
       child: state.when(
