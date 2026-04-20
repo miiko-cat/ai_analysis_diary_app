@@ -1,32 +1,50 @@
+import 'package:ai_analysis_diary_app/core/utils/widget/app_loading_overlay.dart';
 import 'package:ai_analysis_diary_app/features/diary/model/diary_with_analysis.dart';
+import 'package:ai_analysis_diary_app/features/diary/presentation/view_model/detail_diary_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../model/sentiment.dart';
 
-class DetailDiary extends StatelessWidget {
+class DetailDiary extends ConsumerWidget {
   final DiaryWithAnalysis diary;
 
   const DetailDiary({super.key, required this.diary});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('日記詳細')),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            header(diary: diary),
-            SizedBox(height: 16),
-            title(context, diary.title),
-            SizedBox(height: 12),
-            description(context, diary.description),
-            SizedBox(height: 24),
-            aiAnalysis(context, diary),
-          ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 前の画面から渡ってきたDiaryWithAnalysisをViewModelに設定
+    final state = ref.watch(detailDiaryVMProvider(diary));
+    // ignore: unused_local_variable
+    final notifier = ref.read(detailDiaryVMProvider(diary).notifier);
+
+    return AppLoadingOverlay(
+      child: state.when(
+        loading: () => Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Text(error.toString(), style: const TextStyle(color: Colors.red)),
         ),
+        data: (detailDiaryState) {
+          return Scaffold(
+            appBar: AppBar(title: Text('日記詳細')),
+            body: SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  header(diary: diary),
+                  SizedBox(height: 16),
+                  title(context, diary.title),
+                  SizedBox(height: 12),
+                  description(context, diary.description),
+                  SizedBox(height: 24),
+                  aiAnalysis(context, diary),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -56,10 +74,7 @@ class DetailDiary extends StatelessWidget {
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Padding(
         padding: EdgeInsets.all(16),
-        child: Text(
-          description,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.6),
-        ),
+        child: Text(description, style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.6)),
       ),
     );
   }
@@ -72,15 +87,9 @@ class DetailDiary extends StatelessWidget {
         childrenPadding: EdgeInsetsGeometry.all(16),
         children: [
           SizedBox(height: 8),
-          Text(
-            '感情: ${diary.emotion ?? '-'}',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
+          Text('感情: ${diary.emotion ?? '-'}', style: Theme.of(context).textTheme.bodyLarge),
           SizedBox(height: 8),
-          if (diary.summary != null) ...[
-            summarySection(context, diary.summary!),
-            SizedBox(height: 12),
-          ],
+          if (diary.summary != null) ...[summarySection(context, diary.summary!), SizedBox(height: 12)],
           if (diary.advice != null) adviceSection(context, diary.advice!),
         ],
       ),
@@ -128,19 +137,11 @@ class DetailDiary extends StatelessWidget {
               children: [
                 Icon(icon, size: 18),
                 SizedBox(width: 6),
-                Text(
-                  title,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Text(title, style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold)),
               ],
             ),
             SizedBox(height: 8),
-            Text(
-              content,
-              style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
-            ),
+            Text(content, style: theme.textTheme.bodyMedium?.copyWith(height: 1.6)),
           ],
         ),
       ),
