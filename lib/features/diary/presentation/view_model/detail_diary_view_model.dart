@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:ai_analysis_diary_app/features/diary/model/diary_with_analysis.dart';
 import 'package:ai_analysis_diary_app/features/diary/presentation/view_model/detail_diary_state.dart';
+import 'package:ai_analysis_diary_app/features/diary/repository/diary_providers.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../../core/utils/dialog_service.dart';
 import '../../../../core/utils/widget/app_loading_overlay.dart';
@@ -10,7 +13,6 @@ final detailDiaryVMProvider = AsyncNotifierProvider.autoDispose
     .family<DetailDiaryViewModel, DetailDiaryState, DiaryWithAnalysis>(DetailDiaryViewModel.new);
 
 class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
-  // ignore: unused_field
   final DiaryWithAnalysis _diary;
 
   DetailDiaryViewModel(this._diary);
@@ -19,7 +21,10 @@ class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
   late final _dialogService = ref.read(dialogServiceProvider);
 
   // ローディング状態管理
-  late final StateController<bool> _loadingController = ref.read(loadingProvider.notifier);
+  late final _loadingController = ref.read(loadingProvider.notifier);
+
+  // 日記Repository取得
+  late final _diaryRepository = ref.read(diaryRepositoryProvider);
 
   @override
   Future<DetailDiaryState> build() async {
@@ -27,5 +32,35 @@ class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
     return DetailDiaryState();
   }
 
+  // 日記削除処理
+  Future<void> deleteDiary(BuildContext context) async {
+    final completer = Completer<bool>();
+    // 日記削除確認ダイアログ表示
+    _dialogService.show(DialogRequest(type: DialogType.confirmDeleteDiary, completer: completer));
+    // ユーザーがボタンを押すまでここで待機する
+    final result = await completer.future;
 
+    // 削除ボタンをタップした場合
+    if (result) {
+      try {
+        // ローディング
+        _loadingController.state = true;
+        // 日記削除実行
+        await _diaryRepository.delete(_diary.postId);
+        // 成功したら画面を閉じる（一覧に戻る）
+        if (context.mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('日記を削除しました')),
+          );
+        }
+      }
+      catch (e) {
+        state = AsyncData(state.requireValue.copyWith(errorMessage: e.toString()));
+      } finally {
+        // ローディング解除
+        _loadingController.state = false;
+      }
+    }
+  }
 }

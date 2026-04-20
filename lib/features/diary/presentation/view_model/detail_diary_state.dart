@@ -3,10 +3,12 @@ import 'package:ai_analysis_diary_app/features/diary/model/diary_with_analysis.d
 class DetailDiaryState {
   // 画面パラメータ
   final DiaryWithAnalysis? diaryWithAnalysis;
+  final String? errorMessage;
 
-  const DetailDiaryState({this.diaryWithAnalysis});
+  const DetailDiaryState({this.diaryWithAnalysis, this.errorMessage});
 
-  DetailDiaryState copyWith({DiaryWithAnalysis? diaryWithAnalysis}) {
-    return DetailDiaryState(diaryWithAnalysis: diaryWithAnalysis ?? this.diaryWithAnalysis);
+  DetailDiaryState copyWith({DiaryWithAnalysis? diaryWithAnalysis, String? errorMessage}) {
+    return DetailDiaryState(diaryWithAnalysis: diaryWithAnalysis ?? this.diaryWithAnalysis,
+        errorMessage: errorMessage ?? this.errorMessage);
   }
 }

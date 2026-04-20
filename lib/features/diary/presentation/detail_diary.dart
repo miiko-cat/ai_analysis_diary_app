@@ -42,7 +42,7 @@ class DetailDiary extends ConsumerWidget {
                 ],
               ),
             ),
-            bottomNavigationBar: bottomButtons(),
+            bottomNavigationBar: bottomButtons(context, notifier.deleteDiary),
           );
         },
       ),
@@ -97,7 +97,7 @@ class DetailDiary extends ConsumerWidget {
   }
 
   // ボトムナビゲーションバー（編集、削除ボタン）
-  Widget bottomButtons() {
+  Widget bottomButtons(BuildContext context, Future<void> Function(BuildContext) onDelete) {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -106,7 +106,7 @@ class DetailDiary extends ConsumerWidget {
             Expanded(
               flex: 1,
               child: OutlinedButton.icon(
-                onPressed: () => {},
+                onPressed: () => onDelete(context),
                 icon: Icon(Icons.delete_outline),
                 label: Text('削除'),
                 style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
