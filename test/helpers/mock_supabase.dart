@@ -1,3 +1,4 @@
+import 'package:ai_analysis_diary_app/core/utils/dialog_service.dart';
 import 'package:ai_analysis_diary_app/features/auth/repository/auth_repository.dart';
 import 'package:ai_analysis_diary_app/features/diary/repository/diary_repository.dart';
 import 'package:mocktail/mocktail.dart';
@@ -19,3 +20,5 @@ class MockUser extends Mock implements User {}
 class MockAuthRepository extends Mock implements AuthRepository {}
 
 class MockDiaryRepository extends Mock implements DiaryRepository {}
+
+class MockDialogService extends Mock implements DialogService {}

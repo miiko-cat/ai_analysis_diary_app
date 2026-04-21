@@ -23,12 +23,9 @@ class DetailDiary extends ConsumerWidget {
       final errorMessage = next.value?.errorMessage;
       // エラーメッセージが空でない場合にSnackBarを表示
       if (errorMessage != null && errorMessage.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
-        ).closed.then((_) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(errorMessage), backgroundColor: Colors.red)).closed.then((_) {
           // Snackが閉じられたら、エラーメッセージを消去
           notifier.clearError();
         });
@@ -114,7 +111,7 @@ class DetailDiary extends ConsumerWidget {
   }
 
   // ボトムナビゲーションバー（編集、削除ボタン）
-  Widget bottomButtons(BuildContext context, Future<void> Function(BuildContext) onDelete) {
+  Widget bottomButtons(BuildContext context, Future<void> Function() onDelete) {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -123,7 +120,14 @@ class DetailDiary extends ConsumerWidget {
             Expanded(
               flex: 1,
               child: OutlinedButton.icon(
-                onPressed: () => onDelete(context),
+                onPressed: () {
+                  onDelete();
+                  // 成功したら画面を閉じる（一覧に戻る）
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('日記を削除しました')));
+                  }
+                },
                 icon: Icon(Icons.delete_outline),
                 label: Text('削除'),
                 style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
