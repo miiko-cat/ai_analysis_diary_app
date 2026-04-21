@@ -7,6 +7,11 @@ class MockSupabaseClient extends Mock implements SupabaseClient {}
 
 class MockSupabaseAuth extends Mock implements GoTrueClient {}
 
+// Supabaseの中間オブジェクトをMock化
+class MockPostgrestQueryBuilder extends Mock implements SupabaseQueryBuilder {}
+class MockPostgrestFilterBuilder extends Mock implements PostgrestFilterBuilder<Map<String, dynamic>?> {}
+class MockPostgrestTransformBuilder extends Mock implements PostgrestTransformBuilder<PostgrestList> {}
+
 class MockAuthResponse extends Mock implements AuthResponse {}
 
 class MockUser extends Mock implements User {}
