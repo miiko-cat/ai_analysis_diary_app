@@ -14,10 +14,23 @@ class DetailDiary extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 前の画面から渡ってきたDiaryWithAnalysisをViewModelに設定
+    // Home画面から渡ってきたDiaryWithAnalysisをViewModelに設定
     final state = ref.watch(detailDiaryVMProvider(diary));
-    // ignore: unused_local_variable
     final notifier = ref.read(detailDiaryVMProvider(diary).notifier);
+
+    // エラー状態を監視
+    ref.listen(detailDiaryVMProvider(diary), (previous, next) {
+      final errorMessage = next.value?.errorMessage;
+      // エラーメッセージが空でない場合にSnackBarを表示
+      if (errorMessage != null && errorMessage.isNotEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(errorMessage), backgroundColor: Colors.red)).closed.then((_) {
+          // Snackが閉じられたら、エラーメッセージを消去
+          notifier.clearError();
+        });
+      }
+    });
 
     return AppLoadingOverlay(
       child: state.when(
@@ -43,6 +56,7 @@ class DetailDiary extends ConsumerWidget {
                 ],
               ),
             ),
+            bottomNavigationBar: bottomButtons(context, notifier.deleteDiary),
           );
         },
       ),
@@ -92,6 +106,42 @@ class DetailDiary extends ConsumerWidget {
           if (diary.summary != null) ...[summarySection(context, diary.summary!), SizedBox(height: 12)],
           if (diary.advice != null) adviceSection(context, diary.advice!),
         ],
+      ),
+    );
+  }
+
+  // ボトムナビゲーションバー（編集、削除ボタン）
+  Widget bottomButtons(BuildContext context, Future<void> Function() onDelete) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              key: Key('削除ボタン'),
+              flex: 1,
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  await onDelete();
+                  // 成功したら画面を閉じる（一覧に戻る）
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('日記を削除しました')));
+                  }
+                },
+                icon: Icon(Icons.delete_outline),
+                label: Text('削除'),
+                style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              key: Key('編集ボタン'),
+              flex: 2,
+              child: OutlinedButton.icon(onPressed: () => {}, icon: Icon(Icons.edit), label: Text('編集')),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -8,15 +8,17 @@ final dialogServiceProvider = Provider<DialogService>((ref) {
   return service;
 });
 
-enum DialogType { signupSuccess, confirmLogout }
+enum DialogType { signupSuccess, confirmLogout, confirmDeleteDiary }
 
 class DialogRequest {
   final DialogType type;
+  // 結果を保持するためのチケット
+  final Completer<bool>? completer;
   // サインアップ後に、Login画面に渡すメールアドレスとパスワード
   final String? email;
   final String? password;
 
-  DialogRequest({required this.type, this.email, this.password});
+  DialogRequest({required this.type, this.completer, this.email, this.password,});
 }
 
 class DialogService {
