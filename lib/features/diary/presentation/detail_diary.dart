@@ -118,10 +118,11 @@ class DetailDiary extends ConsumerWidget {
         child: Row(
           children: [
             Expanded(
+              key: Key('削除ボタン'),
               flex: 1,
               child: OutlinedButton.icon(
-                onPressed: () {
-                  onDelete();
+                onPressed: () async {
+                  await onDelete();
                   // 成功したら画面を閉じる（一覧に戻る）
                   if (context.mounted) {
                     Navigator.pop(context);
@@ -135,6 +136,7 @@ class DetailDiary extends ConsumerWidget {
             ),
             SizedBox(width: 16),
             Expanded(
+              key: Key('編集ボタン'),
               flex: 2,
               child: OutlinedButton.icon(onPressed: () => {}, icon: Icon(Icons.edit), label: Text('編集')),
             ),

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils/dialog_service.dart';
 import '../../../../core/utils/widget/app_loading_overlay.dart';
 import '../../domain/diary_exception.dart';
+import '../../repository/diary_repository.dart';
 
 final detailDiaryVMProvider = AsyncNotifierProvider.autoDispose
     .family<DetailDiaryViewModel, DetailDiaryState, DiaryWithAnalysis>(DetailDiaryViewModel.new);
@@ -17,14 +18,9 @@ class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
 
   DetailDiaryViewModel(this._diary);
 
-  // 共通DialogService取得
-  late final _dialogService = ref.read(dialogServiceProvider);
+  DiaryRepository get _diaryRepository => ref.read(diaryRepositoryProvider);
 
-  // ローディング状態管理
-  late final _loadingController = ref.read(loadingProvider.notifier);
-
-  // 日記Repository取得
-  late final _diaryRepository = ref.read(diaryRepositoryProvider);
+  DialogService get _dialogService => ref.read(dialogServiceProvider);
 
   @override
   Future<DetailDiaryState> build() async {
@@ -42,18 +38,26 @@ class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
 
     // 削除ボタンをタップした場合
     if (result) {
+      // awaitの後はRefが生きているか確認する
+      if (!ref.mounted) return;
+      // 使う直前に notifier を取得する
+      final loading = ref.read(loadingProvider.notifier);
       try {
         // ローディング
-        _loadingController.state = true;
+        loading.state = true;
         // 日記削除実行
         await _diaryRepository.delete(_diary.postId);
+        if (!ref.mounted) return;
+
       } on DiaryException catch (e) {
         state = AsyncData(state.requireValue.copyWith(errorMessage: e.message));
       } catch (e) {
         state = AsyncData(state.requireValue.copyWith(errorMessage: e.toString()));
       } finally {
         // ローディング解除
-        _loadingController.state = false;
+        if (ref.mounted) {
+          loading.state = false;
+        }
       }
     }
   }

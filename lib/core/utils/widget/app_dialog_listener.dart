@@ -119,6 +119,7 @@ Future<bool?> confirmDeleteDialog(BuildContext context) {
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('キャンセル')),
         TextButton(
+          key: Key('ダイアログ削除ボタン'),
           onPressed: () {
             Navigator.pop(context, true);
           },
