@@ -1,4 +1,4 @@
-import 'package:ai_analysis_diary_app/features/diary/presentation/create_diary.dart';
+import 'package:ai_analysis_diary_app/features/diary/presentation/diary_form.dart';
 import 'package:ai_analysis_diary_app/features/diary/presentation/detail_diary.dart';
 import 'package:ai_analysis_diary_app/features/home/presentation/widgets/sort_bar.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +87,7 @@ class HomePageState extends ConsumerState<HomePage> {
         padding: const EdgeInsets.only(bottom: 16.0),
         child: FloatingActionButton.extended(
           onPressed: () async {
-            await Navigator.push(context, MaterialPageRoute(builder: (context) => CreateDiary()));
+            await Navigator.push(context, MaterialPageRoute(builder: (context) => DiaryForm()));
             // 投稿画面から戻ってきたら再取得
             ref.invalidate(diariesProvider);
           },

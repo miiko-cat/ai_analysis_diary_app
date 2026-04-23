@@ -1,5 +1,6 @@
 import 'package:ai_analysis_diary_app/core/utils/widget/app_loading_overlay.dart';
 import 'package:ai_analysis_diary_app/features/diary/model/diary_with_analysis.dart';
+import 'package:ai_analysis_diary_app/features/diary/presentation/diary_form.dart';
 import 'package:ai_analysis_diary_app/features/diary/presentation/view_model/detail_diary_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,7 +57,7 @@ class DetailDiary extends ConsumerWidget {
                 ],
               ),
             ),
-            bottomNavigationBar: bottomButtons(context, notifier.deleteDiary),
+            bottomNavigationBar: bottomButtons(context, notifier.deleteDiary, ref),
           );
         },
       ),
@@ -111,7 +112,7 @@ class DetailDiary extends ConsumerWidget {
   }
 
   // ボトムナビゲーションバー（編集、削除ボタン）
-  Widget bottomButtons(BuildContext context, Future<void> Function() onDelete) {
+  Widget bottomButtons(BuildContext context, Future<void> Function() onDelete, WidgetRef ref) {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -138,7 +139,11 @@ class DetailDiary extends ConsumerWidget {
             Expanded(
               key: Key('編集ボタン'),
               flex: 2,
-              child: OutlinedButton.icon(onPressed: () => {}, icon: Icon(Icons.edit), label: Text('編集')),
+              child: OutlinedButton.icon(onPressed: () async {
+                await Navigator.push(context, MaterialPageRoute(builder: (context) => DiaryForm(diary: diary,)));
+                // 編集から戻ってきたデータを更新
+                ref.invalidate(detailDiaryVMProvider(diary));
+              }, icon: Icon(Icons.edit), label: Text('編集')),
             ),
           ],
         ),

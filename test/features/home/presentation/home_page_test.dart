@@ -2,7 +2,7 @@ import 'package:ai_analysis_diary_app/features/auth/repository/auth_providers.da
 import 'package:ai_analysis_diary_app/features/diary/model/diary.dart';
 import 'package:ai_analysis_diary_app/features/diary/model/diary_with_analysis.dart';
 import 'package:ai_analysis_diary_app/features/diary/model/sentiment.dart';
-import 'package:ai_analysis_diary_app/features/diary/presentation/create_diary.dart';
+import 'package:ai_analysis_diary_app/features/diary/presentation/diary_form.dart';
 import 'package:ai_analysis_diary_app/features/diary/repository/diary_providers.dart';
 import 'package:ai_analysis_diary_app/features/home/presentation/home_page.dart';
 import 'package:flutter/material.dart';
@@ -167,7 +167,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // ② 日記投稿画面に遷移したことを確認
-      expect(find.byType(CreateDiary), findsOneWidget);
+      expect(find.byType(DiaryForm), findsOneWidget);
 
       // 投稿後は新しい日記を返す
       when(
