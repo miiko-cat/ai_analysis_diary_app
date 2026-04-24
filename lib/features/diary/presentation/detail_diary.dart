@@ -122,9 +122,9 @@ class DetailDiary extends ConsumerWidget {
         child: Row(
           children: [
             Expanded(
-              key: Key('削除ボタン'),
               flex: 1,
               child: OutlinedButton.icon(
+                key: Key('削除ボタン'),
                 onPressed: () async {
                   await onDelete();
                   // 成功したら画面を閉じる（一覧に戻る）
@@ -140,13 +140,17 @@ class DetailDiary extends ConsumerWidget {
             ),
             SizedBox(width: 16),
             Expanded(
-              key: Key('編集ボタン'),
               flex: 2,
-              child: OutlinedButton.icon(onPressed: () async {
-                await Navigator.push(context, MaterialPageRoute(builder: (context) => DiaryForm(diary: diary,)));
-                // 編集から戻ってきたデータを更新
-                ref.invalidate(detailDiaryVMProvider(diary));
-              }, icon: Icon(Icons.edit), label: Text('編集')),
+              child: OutlinedButton.icon(
+                key: Key('編集ボタン'),
+                onPressed: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => DiaryForm(diary: diary)));
+                  // 編集から戻ってきたデータを更新
+                  ref.invalidate(detailDiaryVMProvider(diary));
+                },
+                icon: Icon(Icons.edit),
+                label: Text('編集'),
+              ),
             ),
           ],
         ),

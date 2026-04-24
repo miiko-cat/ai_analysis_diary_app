@@ -14,9 +14,17 @@ import 'package:mocktail/mocktail.dart';
 import '../../../helpers/mock_supabase.dart';
 import '../../../helpers/test_helpers.dart';
 
-final dummyDiaryData = [
-  DiaryWithAnalysis(date: DateTime(2026, 04, 18), title: "ダミータイトル", description: "ダミー本文", postId: 'test-post-id'),
+final dummyDiariesData = [
+  DiaryWithAnalysis(date: DateTime(2026, 04, 18), title: "ダミータイトル", description: "ダミー本文", postId: 'test-post-id', userId: 'test-user-id'),
 ];
+
+final dummyDiaryData = DiaryWithAnalysis(
+  date: DateTime.now(),
+  title: 'ダミータイトル',
+  description: 'ダミー本文',
+  postId: 'test-post-id',
+  userId: 'test-user-id',
+);
 
 void main() {
   late MockDiaryRepository mockDiaryRepo;
@@ -39,6 +47,14 @@ void main() {
 
     // MockUserのidを設定
     when(() => mockUser.id).thenReturn('test-user-id');
+    // fetchDiaryWithAnaylysisの挙動を設定
+    when(
+          () => mockDiaryRepo.fetchDiaryWithAnaylysis(
+        userId: any(named: 'userId'),
+        postId: any(named: 'postId'),
+      ),
+    ).thenAnswer((_) async => dummyDiaryData);
+
     // デリート実行は何も返さない
     when(() => mockDiaryRepo.delete(any())).thenAnswer((_) async {});
     // DialogServiceをMock化
@@ -56,7 +72,7 @@ void main() {
         userId: any(named: 'userId'),
         isDesc: any(named: 'isDesc'),
       ),
-    ).thenAnswer((_) async => dummyDiaryData);
+    ).thenAnswer((_) async => dummyDiariesData);
 
     // 初期表示
     await tester.pumpWidget(

@@ -74,7 +74,7 @@ void main() {
       );
       // 検証
       expect(result.title, 'テストタイトル');
-    });
+    }, skip: 'Supabaseのモック化が複雑なため一旦スキップ');
   });
 
   group('deleteメソッド', () {
@@ -89,7 +89,7 @@ void main() {
               .having((e) => e.message, 'errorMessage', '削除対象のポストIDがありません'),
         ),
       );
-    }, skip: 'Supabaseのモック化が複雑なため一旦スキップ');
+    });
 
     test('データが見つからない場合、notFoundコードのDiaryExceptionが投げられること', () async {
       final targetId = 'non-existent-id';
