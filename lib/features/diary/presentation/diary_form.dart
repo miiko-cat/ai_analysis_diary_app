@@ -219,7 +219,7 @@ class _DiaryFormState extends ConsumerState<DiaryForm> {
                                         postId: widget.diary!.postId!,
                                         title: diary.title,
                                         description: diary.description,
-                                        updatedDate: DateTime.now().toUtc(),
+                                        updatedDate: DateTime.now().toUtc().toIso8601String(),
                                       );
                                     }
 

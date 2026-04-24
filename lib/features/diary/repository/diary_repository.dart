@@ -20,7 +20,7 @@ class DiaryRepository {
     required String postId,
     required String title,
     required String description,
-    required DateTime updatedDate,
+    required String updatedDate,
   }) async {
     final response = await supabase
         .from('diary')
