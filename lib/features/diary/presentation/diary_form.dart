@@ -1,3 +1,4 @@
+import 'package:ai_analysis_diary_app/features/diary/model/diary_with_analysis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -10,14 +11,16 @@ import '../../auth/repository/auth_providers.dart';
 import '../model/diary.dart';
 import '../repository/diary_providers.dart';
 
-class CreateDiary extends ConsumerStatefulWidget {
-  const CreateDiary({super.key});
+class DiaryForm extends ConsumerStatefulWidget {
+  final DiaryWithAnalysis? diary;
+
+  const DiaryForm({super.key, this.diary});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _CreateDiaryState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _DiaryFormState();
 }
 
-class _CreateDiaryState extends ConsumerState<CreateDiary> {
+class _DiaryFormState extends ConsumerState<DiaryForm> {
   final _formKey = GlobalKey<FormState>();
   final _dateController = TextEditingController();
   final _titleController = TextEditingController();
@@ -37,7 +40,16 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
   @override
   void initState() {
     super.initState();
-    _setDate();
+    if (widget.diary == null) {
+      // 新規作成モード
+      _setDate();
+    } else {
+      // 編集モード
+      _selectedDate = widget.diary!.date;
+      _dateController.text = dateformat.format(_selectedDate!);
+      _titleController.text = widget.diary!.title;
+      _desController.text = widget.diary!.description;
+    }
   }
 
   @override
@@ -82,13 +94,11 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
     // 日記のRepositoryを取得
     final diaryRepository = ref.watch(diaryRepositoryProvider);
     // ローディング状態管理
-    late final StateController<bool> loadingController = ref.read(
-      loadingProvider.notifier,
-    );
+    late final StateController<bool> loadingController = ref.read(loadingProvider.notifier);
 
     return AppLoadingOverlay(
       child: Scaffold(
-        appBar: AppBar(title: Text('日記作成')),
+        appBar: AppBar(title: Text(widget.diary == null ? '日記作成' : '日記編集')),
         body: KeyboardDismiss(
           child: SingleChildScrollView(
             padding: EdgeInsets.only(
@@ -99,9 +109,7 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
             ),
             child: Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               child: Padding(
                 padding: EdgeInsets.all(24),
                 child: Form(
@@ -110,7 +118,7 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '日記を作成しましょう',
+                        widget.diary == null ? '日記を作成しましょう' : '日記を編集しましょう',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       SizedBox(height: 16),
@@ -119,12 +127,13 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                         readOnly: true,
                         decoration: InputDecoration(
                           labelText: '日付',
-                          suffixIcon: IconButton(
-                            onPressed: () => _selectDate(context),
-                            icon: Icon(Icons.calendar_today),
-                          ),
+                          suffixIcon:
+                              widget.diary ==
+                                  null // 新規作成時のみアイコンを表示
+                              ? IconButton(onPressed: () => _selectDate(context), icon: Icon(Icons.calendar_today))
+                              : null, // 編集時はアイコンを表示しない
                         ),
-                        onTap: () => _selectDate(context),
+                        onTap: widget.diary == null ? () => _selectDate(context) : null,
                       ),
                       SizedBox(height: 8),
                       TextFormField(
@@ -199,46 +208,39 @@ class _CreateDiaryState extends ConsumerState<CreateDiary> {
                                       description: _desController.text,
                                       userId: currentUser!.id,
                                     );
-                                    final response = await diaryRepository
-                                        .insertDiary(diary);
+
+                                    late final Diary response;
+                                    if (widget.diary == null) {
+                                      // 新規作成モード
+                                      response = await diaryRepository.insertDiary(diary);
+                                    } else {
+                                      // 編集モード
+                                      response = await diaryRepository.updateDiary(
+                                        postId: widget.diary!.postId!,
+                                        title: diary.title,
+                                        description: diary.description,
+                                        updatedDate: DateTime.now().toUtc().toIso8601String(),
+                                      );
+                                    }
 
                                     // 日記をAIに分析させる
-                                    await diaryRepository.analyzeDiary(
-                                      response.userId,
-                                      response.postId!,
-                                    );
+                                    await diaryRepository.analyzeDiary(response.userId, response.postId!);
 
                                     // 感情に応じたアドバイスを生成
-                                    await diaryRepository.generateAdvice(
-                                      response.userId,
-                                      response.postId!,
-                                    );
+                                    await diaryRepository.generateAdvice(response.userId, response.postId!);
 
                                     // 日記投稿完了
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text("日記投稿完了！"),
-                                          duration: Duration(seconds: 2),
-                                        ),
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text("日記投稿完了！"), duration: Duration(seconds: 2)),
                                       );
                                       Navigator.pop(context);
                                     }
                                   } catch (error, stack) {
-                                    LoggerManager().error(
-                                      "日記作成時にエラーが発生しました",
-                                      error: error,
-                                      stackTrace: stack,
-                                    );
+                                    LoggerManager().error("日記作成時にエラーが発生しました", error: error, stackTrace: stack);
 
                                     if (context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(content: Text('投稿に失敗しました')),
-                                      );
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('投稿に失敗しました')));
                                     }
                                   } finally {
                                     setState(() {

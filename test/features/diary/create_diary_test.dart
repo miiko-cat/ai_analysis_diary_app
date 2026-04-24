@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:ai_analysis_diary_app/features/auth/repository/auth_providers.dart';
 import 'package:ai_analysis_diary_app/features/diary/model/diary.dart';
-import 'package:ai_analysis_diary_app/features/diary/presentation/create_diary.dart';
+import 'package:ai_analysis_diary_app/features/diary/presentation/diary_form.dart';
 import 'package:ai_analysis_diary_app/features/diary/repository/diary_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,7 +49,7 @@ void main() {
               currentUserProvider.overrideWith((ref) => mockUser),
             ],
             child: MaterialApp(
-              home: CreateDiary(),
+              home: DiaryForm(),
             )
         )
     );

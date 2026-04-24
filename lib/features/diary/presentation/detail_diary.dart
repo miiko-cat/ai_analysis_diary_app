@@ -1,5 +1,6 @@
 import 'package:ai_analysis_diary_app/core/utils/widget/app_loading_overlay.dart';
 import 'package:ai_analysis_diary_app/features/diary/model/diary_with_analysis.dart';
+import 'package:ai_analysis_diary_app/features/diary/presentation/diary_form.dart';
 import 'package:ai_analysis_diary_app/features/diary/presentation/view_model/detail_diary_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +40,9 @@ class DetailDiary extends ConsumerWidget {
           child: Text(error.toString(), style: const TextStyle(color: Colors.red)),
         ),
         data: (detailDiaryState) {
+          // ViewModel の state が持っている最新の diary を使う
+          final latestDiary = detailDiaryState.diary;
+
           return Scaffold(
             appBar: AppBar(title: Text('日記詳細')),
             body: SingleChildScrollView(
@@ -46,17 +50,17 @@ class DetailDiary extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  header(diary: diary),
+                  header(diary: latestDiary!),
                   SizedBox(height: 16),
-                  title(context, diary.title),
+                  title(context, latestDiary.title),
                   SizedBox(height: 12),
-                  description(context, diary.description),
+                  description(context, latestDiary.description),
                   SizedBox(height: 24),
-                  aiAnalysis(context, diary),
+                  aiAnalysis(context, latestDiary),
                 ],
               ),
             ),
-            bottomNavigationBar: bottomButtons(context, notifier.deleteDiary),
+            bottomNavigationBar: bottomButtons(context, notifier.deleteDiary, ref),
           );
         },
       ),
@@ -111,16 +115,16 @@ class DetailDiary extends ConsumerWidget {
   }
 
   // ボトムナビゲーションバー（編集、削除ボタン）
-  Widget bottomButtons(BuildContext context, Future<void> Function() onDelete) {
+  Widget bottomButtons(BuildContext context, Future<void> Function() onDelete, WidgetRef ref) {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Row(
           children: [
             Expanded(
-              key: Key('削除ボタン'),
               flex: 1,
               child: OutlinedButton.icon(
+                key: Key('削除ボタン'),
                 onPressed: () async {
                   await onDelete();
                   // 成功したら画面を閉じる（一覧に戻る）
@@ -136,9 +140,17 @@ class DetailDiary extends ConsumerWidget {
             ),
             SizedBox(width: 16),
             Expanded(
-              key: Key('編集ボタン'),
               flex: 2,
-              child: OutlinedButton.icon(onPressed: () => {}, icon: Icon(Icons.edit), label: Text('編集')),
+              child: OutlinedButton.icon(
+                key: Key('編集ボタン'),
+                onPressed: () async {
+                  await Navigator.push(context, MaterialPageRoute(builder: (context) => DiaryForm(diary: diary)));
+                  // 編集から戻ってきたデータを更新
+                  ref.invalidate(detailDiaryVMProvider(diary));
+                },
+                icon: Icon(Icons.edit),
+                label: Text('編集'),
+              ),
             ),
           ],
         ),

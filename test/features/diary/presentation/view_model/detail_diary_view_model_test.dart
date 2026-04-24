@@ -18,7 +18,13 @@ void main() {
   late ProviderContainer container;
 
   // ダミーデータ
-  final dummyDiary = DiaryWithAnalysis(date: DateTime.now(), title: 'ダミータイトル', description: 'ダミー本文', postId: 'test-id');
+  final dummyDiary = DiaryWithAnalysis(
+    date: DateTime.now(),
+    title: 'ダミータイトル',
+    description: 'ダミー本文',
+    postId: 'test-post-id',
+    userId: 'test-user-id',
+  );
 
   setUp(() {
     mockRepo = MockDiaryRepository();
@@ -31,11 +37,37 @@ void main() {
       ],
     );
 
+    // fetchDiaryWithAnaylysisの挙動を設定
+    when(
+          () => mockRepo.fetchDiaryWithAnaylysis(
+        userId: any(named: 'userId'),
+        postId: any(named: 'postId'),
+      ),
+    ).thenAnswer((_) async => dummyDiary);
+
     // DialogRequestのfallback登録
     registerFallbackValue(DialogRequest(type: DialogType.confirmDeleteDiary, completer: Completer()));
   });
 
   tearDown(() => container.dispose());
+
+  test('build()が最新の日記データを取得してData状態を返すこと', () async {
+    // .future を await することで、build() の完了を待つ
+    await container.read(detailDiaryVMProvider(dummyDiary).future);
+
+    // build() が終わった後の最新の状態を取得
+    final state = container.read(detailDiaryVMProvider(dummyDiary));
+
+    // stateに渡されたデータと同一のものが返却されていること
+    expect(state.requireValue.diary, dummyDiary);
+    // fetchDiaryWithAnaylysisが一度だけ呼ばれていること
+    verify(
+      () => mockRepo.fetchDiaryWithAnaylysis(
+        userId: any(named: 'userId'),
+        postId: any(named: 'postId'),
+      ),
+    ).called(1);
+  });
 
   group('deleteDiary', () {
     test('削除がキャンセルされた場合、Repositoryは呼ばれないこと', () async {
@@ -59,7 +91,7 @@ void main() {
         final request = invocation.positionalArguments[0] as DialogRequest;
         request.completer?.complete(true); // 削除をタップ
       });
-      when(() => mockRepo.delete('test-id')).thenAnswer((_) async => {});
+      when(() => mockRepo.delete('test-post-id')).thenAnswer((_) async => {});
 
       // ローディング状態を監視
       final loadingStates = <bool>[];
@@ -71,7 +103,7 @@ void main() {
       await container.read(detailDiaryVMProvider(dummyDiary).notifier).deleteDiary();
 
       // 3. 検証
-      verify(() => mockRepo.delete('test-id')).called(1);
+      verify(() => mockRepo.delete('test-post-id')).called(1);
 
       // ローディングが true -> false と遷移したか
       expect(loadingStates, containsAllInOrder([true, false]));
