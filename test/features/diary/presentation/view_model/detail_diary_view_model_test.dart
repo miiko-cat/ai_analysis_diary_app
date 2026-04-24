@@ -37,6 +37,51 @@ void main() {
 
   tearDown(() => container.dispose());
 
+  test('build()が最新の日記データを取得してData状態を返すこと', () async {
+    // テストデータを定義
+    final nowDate = DateTime.now();
+
+    final expectedDiary = DiaryWithAnalysis(
+      date: DateTime.now(),
+      title: 'テストタイトル',
+      description: 'テスト詳細',
+      postId: 'test-post-id',
+      userId: 'test-user-id',
+    );
+
+    // モックの振る舞いを定義
+    when(
+      () => mockRepo.fetchDiaryWithAnaylysis(
+        userId: any(named: 'userId'),
+        postId: any(named: 'postId'),
+      ),
+    ).thenAnswer(
+      (_) async => DiaryWithAnalysis(
+        date: nowDate,
+        title: 'テストタイトル',
+        description: 'テスト詳細',
+        postId: 'test-post-id',
+        userId: 'test-user-id',
+      ),
+    );
+
+    // .future を await することで、build() の完了を待つ
+    await container.read(detailDiaryVMProvider(expectedDiary).future);
+
+    // build() が終わった後の最新の状態を取得
+    final state = container.read(detailDiaryVMProvider(expectedDiary));
+
+    // stateに渡されたデータと同一のものが返却されていること
+    expect(state.requireValue.diary, expectedDiary);
+    // fetchDiaryWithAnaylysisが一度だけ呼ばれていること
+    verify(
+      () => mockRepo.fetchDiaryWithAnaylysis(
+        userId: any(named: 'userId'),
+        postId: any(named: 'postId'),
+      ),
+    ).called(1);
+  });
+
   group('deleteDiary', () {
     test('削除がキャンセルされた場合、Repositoryは呼ばれないこと', () async {
       // 1. ダイアログで「キャンセル(false)」が押されたシミュレーション

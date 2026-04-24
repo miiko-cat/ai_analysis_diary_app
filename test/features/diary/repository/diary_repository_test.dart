@@ -70,7 +70,7 @@ void main() {
         postId: 'test-post-id',
         title: 'テストタイトル',
         description: 'テスト本文',
-        updatedDate: DateTime.now(),
+        updatedDate: DateTime.now().toIso8601String(),
       );
       // 検証
       expect(result.title, 'テストタイトル');
