@@ -40,6 +40,9 @@ class DetailDiary extends ConsumerWidget {
           child: Text(error.toString(), style: const TextStyle(color: Colors.red)),
         ),
         data: (detailDiaryState) {
+          // ViewModel の state が持っている最新の diary を使う
+          final latestDiary = detailDiaryState.diary;
+
           return Scaffold(
             appBar: AppBar(title: Text('日記詳細')),
             body: SingleChildScrollView(
@@ -47,13 +50,13 @@ class DetailDiary extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  header(diary: diary),
+                  header(diary: latestDiary!),
                   SizedBox(height: 16),
-                  title(context, diary.title),
+                  title(context, latestDiary.title),
                   SizedBox(height: 12),
-                  description(context, diary.description),
+                  description(context, latestDiary.description),
                   SizedBox(height: 24),
-                  aiAnalysis(context, diary),
+                  aiAnalysis(context, latestDiary),
                 ],
               ),
             ),

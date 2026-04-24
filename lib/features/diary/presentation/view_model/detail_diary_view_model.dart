@@ -24,8 +24,10 @@ class DetailDiaryViewModel extends AsyncNotifier<DetailDiaryState> {
 
   @override
   Future<DetailDiaryState> build() async {
-    // 初期状態
-    return DetailDiaryState();
+    // リポジトリから最新の日記を1件取得
+    final latestDiary = await _diaryRepository.fetchDiaryWithAnaylysis(userId: _diary.userId!, postId: _diary.postId!);
+    // 最新のデータを保持した状態を返す
+    return DetailDiaryState(diary: latestDiary);
   }
 
   // 日記削除処理

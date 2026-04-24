@@ -86,4 +86,16 @@ class DiaryRepository {
     final diaries = await query.order('date', ascending: !isDesc);
     return diaries.map((diary) => DiaryWithAnalysis.fromJson(diary)).toList();
   }
+
+  // 対象の日記を1件取得
+  Future<DiaryWithAnalysis> fetchDiaryWithAnaylysis({required String userId, required String postId}) async {
+    final response = await supabase.from('diary_with_analysis').select().eq('post_id', postId).eq('user_id', userId).maybeSingle();
+
+    // 対象のデータが取得出来なかった時はエラーを投げる
+    if (response == null) {
+      throw DiaryException(message: 'データが見つかりませんでした', code: DiaryErrorCode.notFound);
+    }
+
+    return DiaryWithAnalysis.fromJson(response);
+  }
 }
